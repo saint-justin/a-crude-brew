@@ -7,7 +7,7 @@ Wren Bernstein
 
 Kevin Kulp
 
-Andrew Shwartz
+Andrew Schwartz
 
 Justin Vaughn
 
