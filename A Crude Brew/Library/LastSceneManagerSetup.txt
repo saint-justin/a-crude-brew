@@ -1,5 +1,9 @@
 sceneSetups:
+<<<<<<< HEAD
+- path: Assets/Scenes/ScenePeter.unity
+=======
 - path: Assets/Scenes/justin_scene.unity
+>>>>>>> master
   isLoaded: 1
   isActive: 1
   isSubScene: 0
