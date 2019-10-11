@@ -53,7 +53,7 @@ public class PersonMovement : MonoBehaviour
                     ChangeToWandering();
                 }
                 // Test function of WalkingToOrder
-                else if(false)
+                else
                 {
                     ChangeToWalkingToOrder();
                 }
