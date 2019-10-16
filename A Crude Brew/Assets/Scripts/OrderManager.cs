@@ -6,13 +6,22 @@ using UnityEngine;
 
 public class OrderManager : MonoBehaviour
 {
+    // Icons
+    public List<Texture2D> icons;
+
+    // Orders
     public GameObject emptyOrder;
     List<GameObject> orders = new List<GameObject>();
+    
 
     // Start is called before the first frame update
     void Start()
     {
+        // Populates the 'orders' list based on all the input text file
         ReadInOrders(@"Assets\Scripts\OrderTextFiles\order_inputs.txt");
+
+        // Adds the zero'th order to to the UI display
+        AddOrderToUI(orders[0]);
     }
 
     // Update is called once per frame
@@ -49,5 +58,11 @@ public class OrderManager : MonoBehaviour
             // Add this to the list of orders
             orders.Add(newOrder);
         }
+    }
+
+    // Adds a given order to the UI w/ info included
+    void AddOrderToUI(GameObject _order)
+    {
+        _order.transform.SetParent(gameObject.transform);
     }
 }

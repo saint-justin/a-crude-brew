@@ -1561,6 +1561,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10ab6cdb84cf5b341bb6f22ed9c89c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icons:
+  - {fileID: 2800000, guid: 42756d76d64bd8f4e941bb1ef4eb119f, type: 3}
+  - {fileID: 2800000, guid: 5a25affacd9e7704c8550be61ca93d9a, type: 3}
+  - {fileID: 2800000, guid: bb9fb4ca2ef3fe04994d8e7a916721d3, type: 3}
+  - {fileID: 2800000, guid: 3214ec6e92c906f48aa3b4d56297352d, type: 3}
+  - {fileID: 2800000, guid: 86ebd998bb571c04396cea43796158b0, type: 3}
+  - {fileID: 2800000, guid: 7174ca9d850bcf043a02c2739357a83a, type: 3}
   emptyOrder: {fileID: 173126055827543580, guid: 2956b9976dfe4c140b2b19189b05c4a3,
     type: 3}
 --- !u!1 &1968279937
@@ -1847,6 +1854,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Order_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 173126055827543580, guid: 2956b9976dfe4c140b2b19189b05c4a3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 173126055827543581, guid: 2956b9976dfe4c140b2b19189b05c4a3,
         type: 3}
