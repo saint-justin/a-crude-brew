@@ -42,8 +42,8 @@ public class ComponentGrid : MonoBehaviour
                 components[i, j] = Instantiate(
                     itemPrefab, // prefab
                     new Vector3( // position
-                        gameObject.transform.position.x + i + padding * i,
-                        gameObject.transform.position.y + j + padding * j,
+                        gameObject.transform.position.x + (i + padding * i) * transform.localScale.x,
+                        gameObject.transform.position.y + (j + padding * j) * transform.localScale.y,
                         gameObject.transform.position.z
                         ), 
                     Quaternion.identity, //rotation
@@ -75,8 +75,8 @@ public class ComponentGrid : MonoBehaviour
     public Vector2Int ComponentPositionToIndex(Vector3 position)
     {
         return new Vector2Int(
-            (int)((position.x - transform.position.x + 0.5f + (padding/2.0f)) / (1.0f + padding)),
-            (int)((position.y - transform.position.y + 0.5f + (padding/2.0f)) / (1.0f + padding))
+            (int)((position.x - transform.position.x + transform.localScale.x * (0.5f + (padding/2.0f))) / (transform.localScale.x * (1.0f + padding))),
+            (int)((position.y - transform.position.y + transform.localScale.y * (0.5f + (padding/2.0f))) / (transform.localScale.y * (1.0f + padding)))
             );
 
     }

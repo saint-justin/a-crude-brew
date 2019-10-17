@@ -111,16 +111,16 @@ public class GridComponent : MonoBehaviour
         float padding = gridRef.padding;
 
         columnBounds = new Rect(
-            currentHardPosition.x - 0.5f - (padding / 2.0f),
-            gridRef.transform.position.y - 0.5f - (padding / 2.0f),
-            1.0f + padding,
-            gridRef.rows * (1.0f + padding)
+            currentHardPosition.x - (0.5f + (padding / 2.0f)) * transform.parent.localScale.x,
+            gridRef.transform.position.y - (0.5f + (padding / 2.0f)) * transform.parent.localScale.y,
+            (1.0f + padding) * transform.parent.localScale.x,
+            gridRef.rows * (1.0f + padding) * transform.parent.localScale.y
             );
         rowBounds = new Rect(
-            gridRef.transform.position.x - 0.5f - (padding / 2.0f),
-            currentHardPosition.y - 0.5f - (padding / 2.0f),
-            gridRef.columns * (1.0f + padding),
-            1.0f + padding
+            gridRef.transform.position.x - (0.5f + (padding / 2.0f)) * transform.parent.localScale.x,
+            currentHardPosition.y - (0.5f + (padding / 2.0f)) * transform.parent.localScale.y,
+            gridRef.columns * (1.0f + padding) * transform.parent.localScale.x,
+            (1.0f + padding) * transform.parent.localScale.y
             );
     }
 }
