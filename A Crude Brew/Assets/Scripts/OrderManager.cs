@@ -10,18 +10,15 @@ public class OrderManager : MonoBehaviour
     public List<Texture2D> icons;
 
     // Orders
+    public int currentOrders = 0;
     public GameObject emptyOrder;
     List<GameObject> orders = new List<GameObject>();
     
-
     // Start is called before the first frame update
     void Start()
     {
         // Populates the 'orders' list based on all the input text file
         ReadInOrders(@"Assets\Scripts\OrderTextFiles\order_inputs.txt");
-
-        // Adds the zero'th order to to the UI display
-        AddOrderToUI(orders[0]);
     }
 
     // Update is called once per frame
@@ -47,7 +44,7 @@ public class OrderManager : MonoBehaviour
         foreach (string currentOrder in textOrders)
         {
             // Create a new order instance to populate
-            GameObject newOrder = Instantiate(emptyOrder);
+            GameObject newOrder = Instantiate(emptyOrder, gameObject.transform);
 
             // Split the order into name and components
             string[] orderSplit = currentOrder.Split('#');
@@ -58,11 +55,5 @@ public class OrderManager : MonoBehaviour
             // Add this to the list of orders
             orders.Add(newOrder);
         }
-    }
-
-    // Adds a given order to the UI w/ info included
-    void AddOrderToUI(GameObject _order)
-    {
-        _order.transform.SetParent(gameObject.transform);
     }
 }
