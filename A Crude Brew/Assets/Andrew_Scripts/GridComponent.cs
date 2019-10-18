@@ -9,7 +9,7 @@ public class GridComponent : MonoBehaviour
 
     private Vector3 currentHardPosition; // position of object before picked up by mouse
 
-    public string type;
+    public Component type;
 
     public ComponentGrid gridRef;
 

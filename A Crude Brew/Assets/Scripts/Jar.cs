@@ -24,7 +24,7 @@ public class Jar : MonoBehaviour
     /// Add components into the jar, provided it is not at max capacity
     /// </summary>
     /// <param name="amount">Number of components to place into the jar</param>
-    public void AddComponents(int amount)
+    public void AddComponent(int amount = 1)
     {
         currentCapacity += amount;
         if (currentCapacity > maxCapacity)
@@ -36,7 +36,7 @@ public class Jar : MonoBehaviour
     /// Remove a component from the jar
     /// </summary>
     /// <param name="amount">Default to removing one item, please do not change</param>
-    public bool RemoveComponents(int amount = 1)
+    public bool RemoveComponent(int amount = 1)
     {
         if (currentCapacity >= amount)
         {
