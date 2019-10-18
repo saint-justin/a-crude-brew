@@ -107,4 +107,13 @@ public class ActiveOrderTracker : MonoBehaviour
         this.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y - (_orderNumber * 20), transform.localPosition.z);
         orderManager.currentOrders++;
     }
+
+    /// <summary>
+    /// Remove this order from the list when it's fully filled
+    /// </summary>
+    public void OrderFilled()
+    {
+        //TODO: Add some fancy VFX in the future here
+        Destroy(gameObject);
+    } 
 }
