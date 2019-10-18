@@ -12,6 +12,8 @@ public class CauldronManager : MonoBehaviour
     List<GameObject> GuiComponents;
     GameObject orderSheet;
 
+    public GameObject emptyCauldronButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +30,11 @@ public class CauldronManager : MonoBehaviour
             AddItems(new int[6] { 1, 1, 1, 1, 1, 1 });
 
         CheckForFilledOrders();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            CheckForEmptyCauldron();
+        }
     }
 
     /// <summary>
@@ -113,6 +120,25 @@ public class CauldronManager : MonoBehaviour
             {
                 // Clear all contents from the cauldron and mark the order as filled
                 orderSheet.transform.GetChild(i).gameObject.GetComponent<ActiveOrderTracker>().OrderFilled();
+                EmptyCauldron();
+            }
+        }
+    }
+
+    /// Checks to see if the player clicked the button to empty their cauldron
+    private void CheckForEmptyCauldron()
+    {
+        Vector3 mousePos = Input.mousePosition;
+
+        Vector2 rectPos = emptyCauldronButton.GetComponent<Transform>().position;
+        float halfWidth = emptyCauldronButton.GetComponent<RectTransform>().rect.width / 2;
+        float halfHeight = emptyCauldronButton.GetComponent<RectTransform>().rect.height / 2;
+
+        // Checking true collision
+        if (mousePos.x < rectPos.x + halfWidth && mousePos.x > rectPos.x - halfWidth)
+        {
+            if (mousePos.y < rectPos.y + halfHeight && mousePos.y > rectPos.y - halfHeight)
+            {
                 EmptyCauldron();
             }
         }
