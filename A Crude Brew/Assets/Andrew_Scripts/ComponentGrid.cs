@@ -16,7 +16,7 @@ public class ComponentGrid : MonoBehaviour
     public float padding = 0.2f;
     //public float gridWidth = 
 
-    public Vector3 position;
+    public Vector3 mousePosition;
 
     public GameObject[] jars;
     public GameObject itemPrefab;
@@ -26,6 +26,8 @@ public class ComponentGrid : MonoBehaviour
 
     private int[,] matchKeeper; // eventually change to a struct that contains both a number and a type, based on struct above
     private bool recheckFlag = false;
+
+    public Plane gridPlane; // An xyz coordinate plane used to determine mouse collision; predefeined to be pointing in the -z plane
 
     // the two following arrays must be the same length
     // Blue, White, Teal, Green, Orange, Red
@@ -63,6 +65,7 @@ public class ComponentGrid : MonoBehaviour
                 components[i, j].GetComponent<Renderer>().material.SetColor("_Color", colors[(int)tempType]);
             }
         }
+        gridPlane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), transform.position);
 
         CheckAllRowsAndColumns();
         RemoveMatches();
@@ -71,6 +74,29 @@ public class ComponentGrid : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    /// <summary>
+    /// Sets mousePosition relative to the grid plane; called through OnMouseDown and OnMouseDrag for clicked grid components
+    /// </summary>
+    public void SetMousePosition()
+    {
+        // Get a raycast based off the mouse and the camera perspective
+        Ray mouseRaycast = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float distFromCamera;
+        if (gridPlane.Raycast(mouseRaycast, out distFromCamera))
+        {
+            mousePosition = mouseRaycast.GetPoint(distFromCamera);
+        }
+    }
+
+    /// <summary>
+    /// Returns the current mousePosition on the grid
+    /// </summary>
+    /// <returns>mousePosition</returns>
+    public Vector3 GetMousePosition()
+    {
+        return mousePosition;
     }
 
     public Vector2Int ComponentPositionToIndex(Vector3 position)

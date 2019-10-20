@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class GridComponent : MonoBehaviour
 {
-
-    private Vector3 mouseOffset; // offset from center of object to mouse cursor position
-
-    private Vector3 currentHardPosition; // position of object before picked up by mouse
-
     public Component type;
-
     public ComponentGrid gridRef;
 
-    private bool drawLines = false;
+    private Vector3 mouseOffset; // offset from center of object to mouse cursor position
+    private Vector3 currentHardPosition; // position of object before picked up by mouse
+    private Vector3 mouseWorld; // Current stored location of the mouse on the grid
 
+    private bool drawLines = false;
     private Rect columnBounds, rowBounds;
 
     // Start is called before the first frame update
@@ -56,9 +53,10 @@ public class GridComponent : MonoBehaviour
         drawLines = true;
         Vector3 pos = Input.mousePosition;
         pos.z = transform.position.z + transform.parent.position.z;
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(pos);
-        mouseWorld.z = transform.position.z;
 
+        gridRef.SetMousePosition();
+        Vector3 mouseWorld = gridRef.GetMousePosition();
+        
         mouseOffset = mouseWorld - transform.position;
         currentHardPosition = transform.position;
 
@@ -70,9 +68,11 @@ public class GridComponent : MonoBehaviour
     {
         Vector3 pos = Input.mousePosition;
         pos.z = transform.position.z + transform.parent.position.z;
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(pos);
-        mouseWorld.z = transform.position.z;
+
+        gridRef.SetMousePosition();
+        Vector3 mouseWorld = gridRef.GetMousePosition();
         transform.position = mouseWorld - mouseOffset;
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 0.001f); // Move the component in front of other items
     }
 
     private void OnMouseUp()
