@@ -48,7 +48,7 @@ public class PersonMovement : MonoBehaviour
         {
             case FiniteState.Inactive:
                 // If paused, immediately start walking
-                if(true)
+                if(false)
                 {
                     ChangeToWandering();
                 }
