@@ -18,12 +18,6 @@ public class OrderManager : MonoBehaviour
     public GameObject scoreObj;
     private ScoreSystem scoreRef;
 
-
-    // allows access to the score system from individual orders, so they can add to the score
-    public ScoreSystem GetScoreRef()
-    {
-        return scoreRef;
-    }
     
     // Start is called before the first frame update
     void Start()
@@ -32,13 +26,19 @@ public class OrderManager : MonoBehaviour
         ReadInOrders(@"Assets\Scripts\OrderTextFiles\order_inputs.txt");
 
         // Setup score vars
-        scoreRef = scoreObj.GetComponent<ScoreSystem>();
+        scoreRef = GameObject.Find("Score").GetComponent<ScoreSystem>();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    // allows access to the score system from individual orders, so they can add to the score
+    public ScoreSystem GetScoreRef()
+    {
+        return scoreRef;
     }
 
     // Reads in all the orders from the text file that holds them

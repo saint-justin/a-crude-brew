@@ -11,10 +11,11 @@ public class ScoreSystem : MonoBehaviour
 
     public void AddScore(int score)
     {
-        if (score < 0) return;
-        score += score;
-
-        text.text = $"Score: {score}";
+        if (score > 0)
+        {
+            this.score += score;
+            text.text = $"Score: {this.score}";
+        }
         
     }
 
@@ -28,11 +29,11 @@ public class ScoreSystem : MonoBehaviour
     {
         text = GetComponent<Text>();
         text.text = "Score: 0";
+        score = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }
