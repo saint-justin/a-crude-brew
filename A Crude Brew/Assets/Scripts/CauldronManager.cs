@@ -10,7 +10,9 @@ public class CauldronManager : MonoBehaviour
 
     // Stores all the base gui components
     List<GameObject> GuiComponents;
-    
+    GameObject orderSheet;
+
+    public GameObject emptyCauldronButton;
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +28,13 @@ public class CauldronManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.RightBracket))
             AddItems(new int[6] { 1, 1, 1, 1, 1, 1 });
+
+        CheckForFilledOrders();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            CheckForEmptyCauldron();
+        }
     }
 
     /// <summary>
@@ -43,6 +52,9 @@ public class CauldronManager : MonoBehaviour
         {
             GuiComponents.Add(gameObject.transform.GetChild(i).gameObject);
         }
+
+        // Get a reference to the order sheet
+        orderSheet = this.transform.parent.GetChild(0).gameObject;
     }
 
     /// <summary>
@@ -65,7 +77,7 @@ public class CauldronManager : MonoBehaviour
     /// </summary>
     private void UpdateVisuals()
     {
-        for(int i=0; i<GuiComponents.Count; i++)
+        for(int i=0; i < GuiComponents.Count; i++)
         {
             GuiComponents[i].transform.GetChild(0).GetComponent<Text>().text = CounterComponents[i].ToString();
         }
@@ -79,6 +91,56 @@ public class CauldronManager : MonoBehaviour
         for (int i = 0; i < CounterComponents.Count; i++)
         {
             CounterComponents[i] = 0;
+        }
+
+        UpdateVisuals();
+    }
+
+    /// <summary>
+    /// Checks the orders for matches to the current order
+    /// </summary>
+    public void CheckForFilledOrders()
+    {
+        // Get all the active orders and populate the list
+        for (int i = 0; i < orderSheet.transform.childCount; i++)
+        {
+            // Get reference to the items in the active order
+            int[] orderItems = orderSheet.transform.GetChild(i).gameObject.GetComponent<OrderInfo>().GetOrderComponents();
+            bool exactSet = true;
+
+            // Check if the active order's components match exactly the cauldron's components
+            for (int j = 0; j < orderItems.Length; j++)
+            {
+                if (orderItems[j] != CounterComponents[j])
+                    exactSet = false;
+            }
+
+            // If the order being checked matches, mark it as filled 
+            if (exactSet)
+            {
+                // Clear all contents from the cauldron and mark the order as filled
+                orderSheet.transform.GetChild(i).gameObject.GetComponent<ActiveOrderTracker>().OrderFilled();
+                EmptyCauldron();
+            }
+        }
+    }
+
+    /// Checks to see if the player clicked the button to empty their cauldron
+    private void CheckForEmptyCauldron()
+    {
+        Vector3 mousePos = Input.mousePosition;
+
+        Vector2 rectPos = emptyCauldronButton.GetComponent<Transform>().position;
+        float halfWidth = emptyCauldronButton.GetComponent<RectTransform>().rect.width / 2;
+        float halfHeight = emptyCauldronButton.GetComponent<RectTransform>().rect.height / 2;
+
+        // Checking true collision
+        if (mousePos.x < rectPos.x + halfWidth && mousePos.x > rectPos.x - halfWidth)
+        {
+            if (mousePos.y < rectPos.y + halfHeight && mousePos.y > rectPos.y - halfHeight)
+            {
+                EmptyCauldron();
+            }
         }
     }
 }

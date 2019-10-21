@@ -13,12 +13,26 @@ public class OrderManager : MonoBehaviour
     public int currentOrders = 0;
     public GameObject emptyOrder;
     List<GameObject> orders = new List<GameObject>();
+
+    // Score-keeping
+    public GameObject scoreObj;
+    private ScoreSystem scoreRef;
+
+
+    // allows access to the score system from individual orders, so they can add to the score
+    public ScoreSystem GetScoreRef()
+    {
+        return scoreRef;
+    }
     
     // Start is called before the first frame update
     void Start()
     {
         // Populates the 'orders' list based on all the input text file
         ReadInOrders(@"Assets\Scripts\OrderTextFiles\order_inputs.txt");
+
+        // Setup score vars
+        scoreRef = scoreObj.GetComponent<ScoreSystem>();
     }
 
     // Update is called once per frame

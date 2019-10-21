@@ -107,4 +107,26 @@ public class ActiveOrderTracker : MonoBehaviour
         this.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y - (_orderNumber * 20), transform.localPosition.z);
         orderManager.currentOrders++;
     }
+
+    /// <summary>
+    /// Remove this order from the list when it's fully filled
+    /// </summary>
+    public void OrderFilled()
+    {
+        // score keeping vars
+        ScoreSystem scoreRef = orderManager.GetScoreRef();
+        int[] components = orderInfo.GetOrderComponents();
+
+        // for now, just multiply total # of components by 25
+        // sum up total components
+        int sum = 0;
+        for (int i = 0; i < components.Length; i++)
+            sum += components[i];
+
+        // multiply by 25 and add score
+        scoreRef.AddScore(sum * 25);
+
+        //TODO: Add some fancy VFX in the future here
+        Destroy(gameObject);
+    } 
 }
