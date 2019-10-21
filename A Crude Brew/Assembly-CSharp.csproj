@@ -62,11 +62,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Andrew_Scripts\Component.cs" />
-    <Compile Include="Assets\Andrew_Scripts\ComponentGrid.cs" />
-    <Compile Include="Assets\Andrew_Scripts\GridComponent.cs" />
+    <Compile Include="Assets\Andrew_Scripts\MatchComponent.cs" />
+    <Compile Include="Assets\Andrew_Scripts\MatchGrid.cs" />
     <Compile Include="Assets\Scripts\ActiveOrderTracker.cs" />
     <Compile Include="Assets\Scripts\CauldronManager.cs" />
+    <Compile Include="Assets\Scripts\Component.cs" />
     <Compile Include="Assets\Scripts\GridManager.cs" />
     <Compile Include="Assets\Scripts\GridPiece.cs" />
     <Compile Include="Assets\Scripts\Jar.cs" />
