@@ -1,9 +1,5 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/andrew_score_scene_copy.unity
-=======
-- path: Assets/Scenes/SceneKevin.unity
->>>>>>> kevin-grid
+- path: Assets/Scenes/SceneJustin.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
