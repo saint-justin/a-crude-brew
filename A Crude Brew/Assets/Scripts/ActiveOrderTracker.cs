@@ -113,6 +113,19 @@ public class ActiveOrderTracker : MonoBehaviour
     /// </summary>
     public void OrderFilled()
     {
+        // score keeping vars
+        ScoreSystem scoreRef = orderManager.GetScoreRef();
+        int[] components = orderInfo.GetOrderComponents();
+
+        // for now, just multiply total # of components by 25
+        // sum up total components
+        int sum = 0;
+        for (int i = 0; i < components.Length; i++)
+            sum += components[i];
+
+        // multiply by 25 and add score
+        scoreRef.AddScore(sum * 25);
+
         //TODO: Add some fancy VFX in the future here
         Destroy(gameObject);
     } 

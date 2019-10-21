@@ -5,7 +5,7 @@ using UnityEngine;
 public struct MatchKeeper
 {
     int streak;
-    string type;
+    Component type;
 }
 
 public class ComponentGrid : MonoBehaviour
@@ -14,9 +14,11 @@ public class ComponentGrid : MonoBehaviour
     public int rows;
 
     public float padding = 0.2f;
+    //public float gridWidth = 
 
     public Vector3 position;
 
+    public GameObject[] jars;
     public GameObject itemPrefab;
 
     private GameObject[,] components;
@@ -26,8 +28,8 @@ public class ComponentGrid : MonoBehaviour
     private bool recheckFlag = false;
 
     // the two following arrays must be the same length
-    private string[] types = { "red", "blue", "green", "yellow", "cyan", "magenta" };
-    private Color[] colors = { Color.red, Color.blue, Color.green, Color.yellow, Color.cyan, Color.magenta };
+    // Blue, White, Teal, Green, Orange, Red
+    private Color[] colors = { new Color(0.21f, 0.34f, 0.80f, 1), new Color(1.0f, 1.0f, 1.0f, 1), new Color(0.63f, 0.91f, 0.88f, 1), new Color(0.26f, 0.73f, 0.21f, 1), new Color(0.925f, 0.63f, 0.26f, 1), new Color(1.0f, 0.0f, 0.0f, 1) };
 
     // Start is called before the first frame update
     void Start()
@@ -55,11 +57,10 @@ public class ComponentGrid : MonoBehaviour
                 // setup back reference to grid
                 componentRefs[i, j].gridRef = this;
 
-                // generate random and set color/type
-                int index = Random.Range(0, types.Length);
-
-                componentRefs[i, j].type = types[index];
-                components[i, j].GetComponent<Renderer>().material.SetColor("_Color", colors[index]);
+                // Select a random component type based off the length of the Component enum
+                Component tempType = (Component)Random.Range(0, System.Enum.GetNames(typeof(Component)).Length);
+                componentRefs[i, j].type = tempType;
+                components[i, j].GetComponent<Renderer>().material.SetColor("_Color", colors[(int)tempType]);
             }
         }
 
@@ -124,18 +125,17 @@ public class ComponentGrid : MonoBehaviour
     // This is where the matching check happens
     private void CheckAllRowsAndColumns()
     {
-        int rowsStopCheck = rows - 3;
-        int columnsStopCheck = columns - 3;
         recheckFlag = false;
 
         // column check
         for(int c = 0; c < columns; c++)
         {
             int currentStreak = 0;
-            string type = "";
-            string previousType = "";
+            Component type;
+            // Initialize the previousType to the first value in the column; since currentStreak is set to 0, it will be incremented to 1
+            Component previousType = componentRefs[c, 0].type;
 
-            for(int r = 0; r < rows; r++)
+            for (int r = 0; r < rows; r++)
             {
                 //Debug.Log($"{c}, {r}");
                 type = componentRefs[c, r].type;
@@ -143,7 +143,7 @@ public class ComponentGrid : MonoBehaviour
                 // if not starting or streak is broken, set currentStreak to 1
                 if(currentStreak == 0 || type != previousType)
                 {
-                    if (r > rowsStopCheck) // if streak is broken past this point, it is impossible to have another match
+                    if (r > rows - 3) // If the streak is broken with less than 3 rows remaining (indexed at 0), stop checking the column
                         break;
                     currentStreak = 1;
                 }
@@ -169,8 +169,9 @@ public class ComponentGrid : MonoBehaviour
         for(int r = 0; r < rows; r++)
         {
             int currentStreak = 0;
-            string type = "";
-            string previousType = "";
+            Component type;
+            // Initialize the previousType to the first value in the row; since currentStreak is set to 0, it will be incremented to 1
+            Component previousType = componentRefs[0, r].type;
 
             for (int c = 0; c < columns; c++)
             {
@@ -179,7 +180,7 @@ public class ComponentGrid : MonoBehaviour
                 // if not starting or streak is broken, set currentStreak to 1
                 if (currentStreak == 0 || type != previousType)
                 {
-                    if (c > columnsStopCheck) // if streak is broken past this point, it is impossible to have another match
+                    if (c > columns - 3) // If the streak is broken with less than 3 columns remaining (indexed at 0), stop checking the row
                         break;
                     currentStreak = 1;
                 }
@@ -194,7 +195,7 @@ public class ComponentGrid : MonoBehaviour
                     for (int i = c; i > c - currentStreak; i--)
                     {
                         // potentially: check if this item was already marked on in column check, then give extra points!
-
+                        // TODO: Ensure that a cross section doesn't have the middle value overwritten (e.g. 4 on column, 3 on row will set the value to 3)
                         // add to matchkeeper
                         matchKeeper[i, r] = currentStreak;
                     }
@@ -230,10 +231,17 @@ public class ComponentGrid : MonoBehaviour
             for (int r = 0; r < rows; r++)
             {
                 positions.Add(components[c, r].transform.position);
+                // If a match was not made with this block, preserve the component
                 if (matchKeeper[c, r] == 0)
+                {
                     notDestroyed.Add(r);
+                }
+                // A match was made; destroy the component
                 else
+                {
+                    jars[(int)componentRefs[c, r].type].GetComponent<Jar>().AddComponent();
                     Destroy(components[c, r]);
+                }
             }
 
             // move existing elements to top spots (upside down, so falling)
@@ -262,11 +270,10 @@ public class ComponentGrid : MonoBehaviour
                 // setup back reference to grid
                 componentRefs[c, j].gridRef = this;
 
-                // generate random and set color/type
-                int index = Random.Range(0, types.Length);
-
-                componentRefs[c, j].type = types[index];
-                components[c, j].GetComponent<Renderer>().material.SetColor("_Color", colors[index]);
+                // Select a random component type based off the length of the Component enum
+                Component tempType = (Component)Random.Range(0, System.Enum.GetNames(typeof(Component)).Length);
+                componentRefs[c, j].type = tempType;
+                components[c, j].GetComponent<Renderer>().material.SetColor("_Color", colors[(int)tempType]);
             }
         }
 
