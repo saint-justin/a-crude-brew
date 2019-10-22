@@ -9,14 +9,17 @@ public class ActiveOrderTracker : MonoBehaviour
     // Component attached to the order's visualized gameobject
     // -------------------------------------------------------
 
-    private OrderInfo orderInfo;            // Contains all the necessary info about the order
+    public OrderInfo orderInfo;            // Contains all the necessary info about the order
     int orderNumber;
 
-    private List<GameObject> orderIcons;    // Populated w/ the three order icons
-    private GameObject orderText;           // Populated w/ the name of the order
-    private GameObject orderProgressBar;    // Populated w/ the parent progress bar object
+    public List<GameObject> orderIcons;    // Populated w/ the three order icons
+    public GameObject orderText;           // Populated w/ the name of the order
+    public GameObject orderProgressBar;    // Populated w/ the parent progress bar object
 
-    private OrderManager orderManager;      // Reference to the existing parent object's orderManager script 
+    public OrderManager orderManager;      // Reference to the existing parent object's orderManager script 
+    public ScoreSystem scoreRef;
+
+    private int i = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +35,7 @@ public class ActiveOrderTracker : MonoBehaviour
     void Update()
     {
         // TODO: Add in the progress bar ticking away and possible updating w/ green for sections that have been met from the current brew
+        i++;
     }
 
     /// <summary>
@@ -57,7 +61,9 @@ public class ActiveOrderTracker : MonoBehaviour
         orderInfo = gameObject.GetComponent<OrderInfo>();
 
         // Get refereence to the OrderManager object
-        orderManager = this.gameObject.transform.parent.GetComponent<OrderManager>();
+        orderManager = gameObject.transform.parent.gameObject.GetComponent<OrderManager>();
+
+        int four = 3;
     }
 
     /// <summary>
@@ -75,7 +81,7 @@ public class ActiveOrderTracker : MonoBehaviour
             // If there's an amount of components needed, add the icon to it
             if (orderComponentAmounts[i] > 0)
             {
-                orderIcons[2 - currentSlot].GetComponent<RawImage>().texture = gameObject.transform.parent.gameObject.GetComponent<OrderManager>().icons[i];
+                orderIcons[2 - currentSlot].GetComponent<RawImage>().texture = orderManager.icons[i];
                 orderIcons[2 - currentSlot].transform.GetChild(0).GetComponent<Text>().text = orderComponentAmounts[i].ToString();
                 currentSlot++;
             }
@@ -111,20 +117,24 @@ public class ActiveOrderTracker : MonoBehaviour
     /// <summary>
     /// Remove this order from the list when it's fully filled
     /// </summary>
-    public void OrderFilled()
+    public void OrderFilled(int[] _components)
     {
-        // score keeping vars
-        ScoreSystem scoreRef = orderManager.GetScoreRef();
-        int[] components = orderInfo.GetOrderComponents();
-
-        // for now, just multiply total # of components by 25
         // sum up total components
         int sum = 0;
-        for (int i = 0; i < components.Length; i++)
-            sum += components[i];
+        for (int i = 0; i < _components.Length; i++)
+        {
+            sum += _components[i];
+        }
+
+        // If initialized in Start(), the reference to Score.GetComponent<ScoreSystem>() is lost
+        if (scoreRef == null)
+        {
+            scoreRef = GameObject.Find("Score").GetComponent<ScoreSystem>();
+        }
 
         // multiply by 25 and add score
         scoreRef.AddScore(sum * 25);
+
 
         //TODO: Add some fancy VFX in the future here
         Destroy(gameObject);

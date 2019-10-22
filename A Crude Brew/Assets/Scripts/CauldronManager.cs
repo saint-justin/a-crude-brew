@@ -54,7 +54,7 @@ public class CauldronManager : MonoBehaviour
         }
 
         // Get a reference to the order sheet
-        orderSheet = this.transform.parent.GetChild(0).gameObject;
+        orderSheet = this.transform.parent.GetChild(1).gameObject;
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class CauldronManager : MonoBehaviour
             if (exactSet)
             {
                 // Clear all contents from the cauldron and mark the order as filled
-                orderSheet.transform.GetChild(i).gameObject.GetComponent<ActiveOrderTracker>().OrderFilled();
+                orderSheet.transform.GetChild(i).gameObject.GetComponent<ActiveOrderTracker>().OrderFilled(orderItems);
                 EmptyCauldron();
             }
         }

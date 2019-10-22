@@ -9,15 +9,15 @@ public class OrderInfo : MonoBehaviour
     // ---------------------------------------------------
 
     // Basic information for the order to hold
-    string orderName = "";
+    public string orderName = "";
 
     //Denotes how many of each given item the order requires
-    int componentRaindrops = 0;
-    int componentTeeth = 0;
-    int componentVials = 0;
-    int componentFeathers = 0;
-    int componentHorns = 0;
-    int componentYarn = 0;
+    public int componentRaindrops = 0;
+    public int componentTeeth = 0;
+    public int componentVials = 0;
+    public int componentFeathers = 0;
+    public int componentHorns = 0;
+    public int componentYarn = 0;
 
     /// <summary>
     /// Gets a list of integers that contain the amount of each given component needed to fill the order

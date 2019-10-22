@@ -1104,6 +1104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a16fe13d8745e24389cd01e591abb18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  emptyCauldronButton: {fileID: 0}
 --- !u!1 &503022505 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1542898836236455919, guid: 0de779dd03e4cb342b066ec9c5413ee4,
@@ -3715,12 +3716,12 @@ PrefabInstance:
     - target: {fileID: 1542898836236455918, guid: 0de779dd03e4cb342b066ec9c5413ee4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -90
+      value: -83
       objectReference: {fileID: 0}
     - target: {fileID: 1542898836236455918, guid: 0de779dd03e4cb342b066ec9c5413ee4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -19
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 1542898836236455918, guid: 0de779dd03e4cb342b066ec9c5413ee4,
         type: 3}
