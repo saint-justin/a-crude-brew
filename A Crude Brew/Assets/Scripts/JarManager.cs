@@ -40,8 +40,8 @@ public class JarManager : MonoBehaviour
         jarHorns = this.transform.GetChild(5).gameObject;
 
         // Populate the tracker list of jars
-        jars = new List<GameObject>() { jarHorns, jarFeathers, jarRaindrops, jarTeeth, jarVials, jarYarn };
-        trueJars = new List<GameObject>() { trueJarHorns, trueJarFeathers, trueJarRaindrops, trueJarTeeth, trueJarVials, trueJarYarn };
+        jars = new List<GameObject>() { jarRaindrops, jarTeeth, jarVials, jarFeathers, jarHorns, jarYarn };
+        trueJars = new List<GameObject>() { trueJarRaindrops, trueJarTeeth, trueJarVials, trueJarFeathers, trueJarHorns, trueJarYarn };
 
         // Make all the modifier int arrays needed
         modifiers = new List<int[]>()

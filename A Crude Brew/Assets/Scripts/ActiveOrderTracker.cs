@@ -44,6 +44,9 @@ public class ActiveOrderTracker : MonoBehaviour
     /// </summary>
     void InitializeVariables()
     {
+        // Get a reference to the info for this order
+        orderInfo = gameObject.GetComponent<OrderInfo>();
+
         // List of all the child components
         List<GameObject> children = new List<GameObject>();
 
@@ -55,10 +58,9 @@ public class ActiveOrderTracker : MonoBehaviour
         orderIcons = new List<GameObject>() { children[1], children[2], children[3] };
         orderProgressBar = children[4];
         orderText = children[0];
-        orderText.GetComponent<Text>().text = "Default Text";
+        orderText.GetComponent<Text>().text = orderInfo.GetOrderName();
 
-        // Get a reference to the info for this order
-        orderInfo = gameObject.GetComponent<OrderInfo>();
+
 
         // Get refereence to the OrderManager object
         orderManager = gameObject.transform.parent.gameObject.GetComponent<OrderManager>();

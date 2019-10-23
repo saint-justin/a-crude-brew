@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CauldronManager : MonoBehaviour
 {
     // Counter categories to keep track of how much of a given thing exists in the cauldron
-    List<int> CounterComponents;
+    public List<int> CounterComponents;
 
     // Stores all the base gui components
     List<GameObject> GuiComponents;

@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\OrderInfo.cs" />
     <Compile Include="Assets\Scripts\OrderManager.cs" />
     <Compile Include="Assets\Scripts\PersonMovement.cs" />
+    <Compile Include="Assets\Scripts\TutorialManager.cs" />
     <None Include="Assets\Scripts\OrderTextFiles\order_inputs.txt" />
     <None Include="Assets\Shaders\Default.shader" />
     <Reference Include="Unity.Timeline.Editor">

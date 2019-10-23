@@ -50,10 +50,6 @@ public class OrderManager : MonoBehaviour
         // Split that single string into all the different lines
         string[] textOrders = fullText.Split('\r');
 
-        // Split each of those seperate lines into their order name and components   
-        Stack<string> orderNames = new Stack<string>();
-        Stack<string> orderComponents = new Stack<string>();
-
         // Cycle through all entries and split them off into their own respective orders
         foreach (string currentOrder in textOrders)
         {
@@ -62,6 +58,12 @@ public class OrderManager : MonoBehaviour
 
             // Split the order into name and components
             string[] orderSplit = currentOrder.Split('#');
+
+            // Remove /n from lines following the first one
+            if (orderSplit[0].Contains("\n"))
+            {
+                orderSplit[0] = orderSplit[0].Remove(0, 1);
+            }
 
             // Push the order info into the order object
             newOrder.GetComponent<OrderInfo>().SetOrderInfo(orderSplit[0], orderSplit[1]);
