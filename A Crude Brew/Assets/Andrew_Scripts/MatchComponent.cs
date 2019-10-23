@@ -74,7 +74,7 @@ public class MatchComponent : MonoBehaviour
     }
 
     /// <summary>
-    /// Picks up the component off the grid
+    /// Picks up the component off the grid 
     /// </summary>
     private void OnMouseDown()
     {
