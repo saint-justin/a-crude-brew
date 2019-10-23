@@ -67,8 +67,6 @@
     <Compile Include="Assets\Scripts\ActiveOrderTracker.cs" />
     <Compile Include="Assets\Scripts\CauldronManager.cs" />
     <Compile Include="Assets\Scripts\Component.cs" />
-    <Compile Include="Assets\Scripts\GridManager.cs" />
-    <Compile Include="Assets\Scripts\GridPiece.cs" />
     <Compile Include="Assets\Scripts\Jar.cs" />
     <Compile Include="Assets\Scripts\OrderInfo.cs" />
     <Compile Include="Assets\Scripts\OrderManager.cs" />
