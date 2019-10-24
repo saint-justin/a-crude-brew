@@ -7,9 +7,6 @@ public class MatchGrid : MonoBehaviour
     public int columns;
     public int rows;
 
-    public int activeRow;
-    public int activeColumn;
-
     public float padding = 0.2f;
 
     public Vector3 mousePosition;
@@ -58,18 +55,17 @@ public class MatchGrid : MonoBehaviour
     /// <param name="column"></param>
     public void CreateComponent(int row, int column)
     {
-        activeRow = row;
-        activeColumn = column;
-
         GameObject newComponent = Instantiate(
             itemPrefab, // prefab
             IndexToWorldPos(new Vector2Int(row, column)), //position
             Quaternion.identity, //rotation
             gameObject.transform // parent
             );
+        newComponent.GetComponent<MatchComponent>().Initialize(gameObject, row, column);
 
         components[column, row] = newComponent;
         componentRefs[column, row] = newComponent.GetComponent<MatchComponent>();
+
         componentRefs[column, row].SetLocation(new Vector2Int(row, column));
 
         // Select a random component type based off the length of the Component enum
@@ -77,25 +73,17 @@ public class MatchGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets mousePosition relative to the grid plane; called through OnMouseDown and OnMouseDrag for clicked grid components
+    /// Returns the current mousePosition on the grid
     /// </summary>
-    public void SetMousePosition()
+    /// <returns>Vector3 with the z value attached to the grid</returns>
+    public Vector3 GetMousePosition()
     {
-        // Get a raycast based off the mouse and the camera perspective
         Ray mouseRaycast = Camera.main.ScreenPointToRay(Input.mousePosition);
         float distFromCamera;
         if (gridPlane.Raycast(mouseRaycast, out distFromCamera))
         {
             mousePosition = mouseRaycast.GetPoint(distFromCamera);
         }
-    }
-
-    /// <summary>
-    /// Returns the current mousePosition on the grid
-    /// </summary>
-    /// <returns>mousePosition</returns>
-    public Vector3 GetMousePosition()
-    {
         return mousePosition;
     }
 
@@ -104,13 +92,15 @@ public class MatchGrid : MonoBehaviour
     /// </summary>
     /// <param name="position">Global coordinates of a component</param>
     /// <returns>{ column, row }</returns>
-    public Vector2Int ComponentPositionToIndex(Vector3 position)
+    public Vector2Int WorldPosToIndex(Vector3 position)
     {
-        return new Vector2Int(
-            (int)((position.x - transform.position.x + transform.localScale.x * (0.5f + (padding/2.0f))) / (transform.localScale.x * (1.0f + padding))),
-            (int)((position.y - transform.position.y + transform.localScale.y * (0.5f + (padding/2.0f))) / (transform.localScale.y * (1.0f + padding)))
+        Vector2 gridToComponent = new Vector2(position.x - transform.position.x,position.y - transform.position.y);
+        Vector2Int offsetToIndex = new Vector2Int(
+            (int)((gridToComponent.x / transform.localScale.x) / (1.0f + padding)),
+            (int)((gridToComponent.y / transform.localScale.y) / (1.0f + padding))
             );
 
+        return offsetToIndex;
     }
 
     /// <summary>
@@ -122,13 +112,13 @@ public class MatchGrid : MonoBehaviour
     private MatchComponent[,] BuildSwapArray(Vector3 currentHardPos, Vector3 newPos)
     {
         // Translates the locations to 2D grid coordinates
-        Vector2Int originIndex = ComponentPositionToIndex(currentHardPos);
-        Vector2Int newIndex = ComponentPositionToIndex(newPos);
+        Vector2Int originIndex = WorldPosToIndex(currentHardPos);
+        Vector2Int newIndex = WorldPosToIndex(newPos);
         Vector2Int offset = newIndex - originIndex;
         MatchComponent tempComponent;
 
         // If the new position is outside the grid, return null
-        if(newIndex.x < 0 || newIndex.x > columns || newIndex.y < 0 || newIndex.y > rows)
+        if(newIndex.x < 0 || newIndex.x >= columns || newIndex.y < 0 || newIndex.y >= rows)
         {
             return null;
         }
@@ -139,14 +129,7 @@ public class MatchGrid : MonoBehaviour
         }
 
         // A valid swap has been made; move the rows/columns, then return the swapped value
-        MatchComponent[,] swapComponentGrid = new MatchComponent[columns, rows];
-        for (int i = 0; i < columns; i++)
-        {
-            for (int j = 0; j < rows; j++)
-            {
-                swapComponentGrid[i, j] = components[i, j].GetComponent<MatchComponent>();
-            }
-        }
+        MatchComponent[,] swapComponentGrid = componentRefs;
 
         // Component was moved either left or right
         if(offset.x != 0)
@@ -219,8 +202,8 @@ public class MatchGrid : MonoBehaviour
 
     /*public bool CheckSwap(Vector3 aPos, Vector3 bPos)
     {
-        Vector2Int aIndex = ComponentPositionToIndex(aPos);
-        Vector2Int bIndex = ComponentPositionToIndex(bPos);
+        Vector2Int aIndex = WorldPosToIndex(aPos);
+        Vector2Int bIndex = WorldPosToIndex(bPos);
         // Debug.Log($"a: {aIndex}, b: {bIndex}");
 
         // perform swap
@@ -440,12 +423,14 @@ public class MatchGrid : MonoBehaviour
     /// <param name="swapComponentGrid">2D grid containing the swap</param>
     public void ConfirmSwap(MatchComponent[,] swapComponentGrid)
     {
+        componentRefs = swapComponentGrid;
         for(int c = 0; c < columns; c++)
         {
             for(int r = 0; r < rows; r++)
             {
-                // TODO: SetLocation() the MatchComponents to the new row/column
-                swapComponentGrid[c, r].SetLocation(swapComponentGrid[c, r].rowColumn);
+                componentRefs[c, r] = swapComponentGrid[c, r];
+                components[c, r] = componentRefs[c, r].gameObject;
+                componentRefs[c, r].SetLocation(new Vector2Int(r, c));
             }
         }
     }
@@ -471,8 +456,8 @@ public class MatchGrid : MonoBehaviour
         int row = rowColumn.x;
         int column = rowColumn.y;
         return new Vector3(
-            transform.position.x + transform.localScale.x * (0.5f + column * 1.0f + column * padding),
-            transform.position.y + transform.localScale.y * (0.5f + row * 1.0f + row * padding),
+            transform.position.x + transform.localScale.x * ((column + 0.5f) * (1.0f + padding)),
+            transform.position.y + transform.localScale.y * ((row + 0.5f) * (1.0f + padding)),
             transform.position.z);
     }
 
@@ -501,6 +486,47 @@ public class MatchGrid : MonoBehaviour
             for (int c = 0; c < columns; c++)
             {
                 componentRefs[c, r].SetLocation(new Vector2Int(r, c));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the objective locations for the grid based on dragging a component
+    /// </summary>
+    /// <param name="rowColumn">Original rowColumn of the component</param>
+    /// <param name="newRowColumn">Current rowColumn of the component</param>
+    public void DragPiece(Vector2Int rowColumn, Vector2Int newRowColumn)
+    {
+        if (newRowColumn.x < 0 || newRowColumn.x >= rows || newRowColumn.y < 0 || newRowColumn.y >= columns) { return; }
+        if (newRowColumn.x != 0 && newRowColumn.y != 0) { return; }
+        if (newRowColumn.x == 0 && newRowColumn.y == 0) { return; }
+
+        if(newRowColumn.x < rowColumn.x)
+        {
+            for(int x = newRowColumn.x; x < rowColumn.x; x++)
+            {
+
+            }
+        }
+        else if(newRowColumn.x > rowColumn.x)
+        {
+            for(int x = newRowColumn.x; x > rowColumn.x; x--)
+            {
+
+            }
+        }
+        else if(newRowColumn.y < rowColumn.y)
+        {
+            for(int y = newRowColumn.y; y < rowColumn.y; y++)
+            {
+
+            }
+        }
+        else
+        {
+            for(int y = newRowColumn.y; y > rowColumn.y; y++)
+            {
+
             }
         }
     }

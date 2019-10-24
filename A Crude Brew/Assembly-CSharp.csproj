@@ -62,12 +62,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Andrew_Scripts\MatchComponent.cs" />
-    <Compile Include="Assets\Andrew_Scripts\MatchGrid.cs" />
     <Compile Include="Assets\Scripts\ActiveOrderTracker.cs" />
     <Compile Include="Assets\Scripts\CauldronManager.cs" />
     <Compile Include="Assets\Scripts\Component.cs" />
     <Compile Include="Assets\Scripts\Jar.cs" />
+    <Compile Include="Assets\Scripts\MatchComponent.cs" />
+    <Compile Include="Assets\Scripts\MatchGrid.cs" />
     <Compile Include="Assets\Scripts\OrderInfo.cs" />
     <Compile Include="Assets\Scripts\OrderManager.cs" />
     <Compile Include="Assets\Scripts\PersonMovement.cs" />
