@@ -17,13 +17,17 @@ public class MatchComponent : MonoBehaviour
     private bool drawLines = false;
     private Rect columnBounds;
     private Rect rowBounds;
+    private bool initialized = false;
 
-    public Vector2Int rowColumn;
+    public Vector2Int columnRow;
 
     // Start is called before the first frame update
     void Start()
     {
-        rowColumn = new Vector2Int(-1, -1);
+        if(!initialized)
+        {
+            columnRow = new Vector2Int(-1, -1);
+        }
     }
 
     // Update is called once per frame
@@ -54,17 +58,16 @@ public class MatchComponent : MonoBehaviour
     /// <param name="gridGameObject">Reference to the Grid's gameObject</param>
     /// <param name="row">Indexed row</param>
     /// <param name="column">Indexed column</param>
-    public void Initialize(GameObject gridGameObject, int row, int column)
+    public void Initialize(GameObject gridGameObject, int column, int row)
     {
 
         gridObject = gridGameObject;
         gridRef = gridObject.GetComponent<MatchGrid>();
-        rowColumn = new Vector2Int(row, column);
+        columnRow = new Vector2Int(column, row);
+        initialized = true;
 
         // currentHardPosition variable needed for column and row bounds method
-        SetLocation(rowColumn);
-
-        CalcColumnAndRowBounds(rowColumn);
+        SetLocation(columnRow);
     }
 
     /// <summary>
@@ -94,7 +97,7 @@ public class MatchComponent : MonoBehaviour
         mouseOffset = mouseWorld - transform.position;
         currentObjectivePosition = mouseWorld - mouseOffset;
 
-        // CalcColumnAndRowBounds(rowColumn);
+        // CalcColumnAndRowBounds(columnRow);
     }
 
     /// <summary>
@@ -104,7 +107,7 @@ public class MatchComponent : MonoBehaviour
     {
         Vector3 mouseWorld = gridRef.GetMousePosition();
         currentObjectivePosition = mouseWorld - mouseOffset + new Vector3(0.0f, 0.0f, -0.001f);
-        // gridRef.DragPiece(rowColumn, gridRef.WorldPosToIndex(mouseWorld - mouseOffset));
+        gridRef.DragAdjacentPieces(columnRow, gridRef.WorldPosToIndex(mouseWorld - mouseOffset));
     }
 
     /// <summary>
@@ -114,57 +117,27 @@ public class MatchComponent : MonoBehaviour
     {
         drawLines = false;
 
-        //Debug.Log(columnBounds);
-        //Debug.Log(currentHardPosition);
-        //Debug.Log(transform.position);
-
         // TODO: Implement this as a parameter for CheckSwap
-        Vector2Int newRowColumn = gridRef.WorldPosToIndex(currentObjectivePosition);
-        Debug.Log("newRowColumn.x = " + newRowColumn.x + ", newRowColumn.y = " + newRowColumn.y);
+        Vector2Int newColumnRow = gridRef.WorldPosToIndex(currentObjectivePosition);
+        Debug.Log("newColumnRow.x = " + newColumnRow.x + ", newColumnRow.y = " + newColumnRow.y);
 
         // if swap doesn't work, revert object back to its original position
         gridRef.CheckSwap(currentHardPosition, transform.position);
     }
 
     /// <summary>
-    /// Sets the bounding rectangles for the row and column that contains the component
-    /// </summary>
-    private void CalcColumnAndRowBounds(Vector2Int _rowColumn)
-    {
-        // bounds are based on padding as well
-        Vector3 gridScale = gridObject.transform.localScale;
-        Vector3 gridPos = gridObject.transform.position;
-        float padding = gridRef.padding;
-        int row = _rowColumn.x;
-        int column = _rowColumn.y;
-
-        columnBounds = new Rect(
-            gridPos.x + gridScale.x * (column * (padding + 1.0f)),
-            gridPos.y,
-            gridScale.x * ((column + 1) * (padding + 1.0f)),
-            gridScale.y * (gridRef.rows * (padding + 1.0f))
-            );
-        rowBounds = new Rect(
-            gridPos.x,
-            gridPos.y + gridScale.y * (row * (padding + 1.0f)),
-            gridScale.x * (gridRef.columns * (padding + 1.0f)),
-            gridScale.y * ((row+1) * (padding + 1.0f))
-            );
-    }
-
-    /// <summary>
     /// Sets the currentHardPosition, currentObjectivePosition, and transform.position at the given row/column
     /// </summary>
-    public void SetLocation(Vector2Int _rowColumn)
+    public void SetLocation(Vector2Int _columnRow)
     {
         // TODO: Overhaul the MatchComponents to include a row/column reference instead of being based on the fucking transform.position
-        rowColumn = _rowColumn;
+        columnRow = _columnRow;
         if (gridRef == null)
         {
             gridObject = GameObject.Find("Grid");
             gridRef = gridObject.GetComponent<MatchGrid>();
         }
-        currentHardPosition = gridRef.IndexToWorldPos(rowColumn);
+        currentHardPosition = gridRef.IndexToWorldPos(columnRow);
         currentObjectivePosition = currentHardPosition;
         transform.position = currentObjectivePosition;
     }
@@ -172,10 +145,10 @@ public class MatchComponent : MonoBehaviour
     /// <summary>
     /// Set the objective location to the indexed row/column
     /// </summary>
-    /// <param name="_rowColumn">Vector2Int(row, column)</param>
-    public void SetObjectiveLocation(Vector2Int _rowColumn)
+    /// <param name="_columnRow">Vector2Int(row, column)</param>
+    public void SetObjectiveLocation(Vector2Int _columnRow)
     {
-        currentObjectivePosition = gridRef.IndexToWorldPos(_rowColumn);
+        currentObjectivePosition = gridRef.IndexToWorldPos(_columnRow);
     }
 
     /// <summary>

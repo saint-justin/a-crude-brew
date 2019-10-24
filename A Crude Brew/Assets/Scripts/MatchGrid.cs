@@ -31,11 +31,11 @@ public class MatchGrid : MonoBehaviour
         components = new GameObject[columns, rows];
         componentRefs = new MatchComponent[columns, rows];
         matchKeeper = new int[columns, rows];
-        for (int i = 0; i < columns; i++)
+        for (int c = 0; c < columns; c++)
         {
-            for (int j = 0; j < rows; j++)
+            for (int r = 0; r < rows; r++)
             {
-                CreateComponent(j, i);
+                CreateComponent(c, r);
             }
         }
         gridPlane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), transform.position);
@@ -46,27 +46,42 @@ public class MatchGrid : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
+        for (int i = 0; i <= columns; i++)
+        {
+            Debug.DrawLine(
+                transform.position + new Vector3(i * transform.localScale.x * (1.0f + padding), 0, 0),
+                transform.position + new Vector3(i * transform.localScale.x * (1.0f + padding), rows * transform.localScale.y * (1.0f + padding), 0)
+                );
+        }
+        for (int i = 0; i <= rows; i++)
+        {
+            Debug.DrawLine(
+                transform.position + new Vector3(0, i * transform.localScale.y * (1.0f + padding), 0),
+                transform.position + new Vector3(columns * transform.localScale.x * (1.0f + padding), i * transform.localScale.y * (1.0f + padding), 0)
+                );
+        }*/
     }
 
     /// <summary>
     /// Creates a new random component at the indexed row and column
     /// </summary>
-    /// <param name="row"></param>
     /// <param name="column"></param>
-    public void CreateComponent(int row, int column)
+    /// <param name="row"></param>
+    public void CreateComponent(int column, int row)
     {
         GameObject newComponent = Instantiate(
             itemPrefab, // prefab
-            IndexToWorldPos(new Vector2Int(row, column)), //position
+            IndexToWorldPos(new Vector2Int(column, row)), //position
             Quaternion.identity, //rotation
             gameObject.transform // parent
             );
-        newComponent.GetComponent<MatchComponent>().Initialize(gameObject, row, column);
+        newComponent.GetComponent<MatchComponent>().Initialize(gameObject, column, row);
 
         components[column, row] = newComponent;
         componentRefs[column, row] = newComponent.GetComponent<MatchComponent>();
 
-        componentRefs[column, row].SetLocation(new Vector2Int(row, column));
+        componentRefs[column, row].SetLocation(new Vector2Int(column, row));
 
         // Select a random component type based off the length of the Component enum
         componentRefs[column, row].SetComponentType((Component)Random.Range(0, 6));
@@ -200,45 +215,6 @@ public class MatchGrid : MonoBehaviour
         }
     }
 
-    /*public bool CheckSwap(Vector3 aPos, Vector3 bPos)
-    {
-        Vector2Int aIndex = WorldPosToIndex(aPos);
-        Vector2Int bIndex = WorldPosToIndex(bPos);
-        // Debug.Log($"a: {aIndex}, b: {bIndex}");
-
-        // perform swap
-        MatchComponent temp = componentRefs[aIndex.x, aIndex.y];
-        componentRefs[aIndex.x, aIndex.y] = componentRefs[bIndex.x, bIndex.y];
-        componentRefs[bIndex.x, bIndex.y] = temp;
-
-        CheckGridForMatches(componentRefs);
-
-        if (recheckFlag) // if swap causes match
-        {
-            // change transforms first because it's easier here
-            components[aIndex.x, aIndex.y].transform.position = components[bIndex.x, bIndex.y].transform.position;
-            components[bIndex.x, bIndex.y].transform.position = aPos;
-
-            // perform swap on other array, do this one here for optimization
-            GameObject tempObj = components[aIndex.x, aIndex.y];
-            components[aIndex.x, aIndex.y] = components[bIndex.x, bIndex.y];
-            components[bIndex.x, bIndex.y] = tempObj;
-
-            // remove matches
-            RemoveMatches();
-            return true;
-        }
-        else
-        {
-            // swap back
-            temp = componentRefs[aIndex.x, aIndex.y];
-            componentRefs[aIndex.x, aIndex.y] = componentRefs[bIndex.x, bIndex.y];
-            componentRefs[bIndex.x, bIndex.y] = temp;
-
-            return recheckFlag;
-        }
-    }*/
-
     /// <summary>
     /// Checks all rows and columns for potential matches; saves any matches made in the 2D array matchKeeper
     /// </summary>
@@ -258,7 +234,6 @@ public class MatchGrid : MonoBehaviour
 
             for (int r = 1; r < rows; r++)
             {
-                //Debug.Log($"{c}, {r}");
                 type = swapComponentGrid[c, r].type;
 
                 if(type != previousType)
@@ -326,21 +301,6 @@ public class MatchGrid : MonoBehaviour
                 previousType = type;
             }
         }
-        // vibe check
-        // ...
-
-        // debug to check match array
-        //string arrString = "";
-        //for (int i = 0; i < rows; i++)
-        //{
-        //    string row = "";
-        //    for (int j = 0; j < columns; j++)
-        //        row += $"{matchKeeper[j, i]}{componentRefs[j, i].type.ToCharArray()[0]}, ";
-
-        //    row = row.Substring(0, row.Length - 2) + '\n';
-        //    arrString += row;
-        //}
-        //Debug.Log(arrString);
 
         return matchWasMade;
     }
@@ -375,7 +335,7 @@ public class MatchGrid : MonoBehaviour
                     {
                         components[c, r - vertOffset] = components[c, r];
                         componentRefs[c, r - vertOffset] = componentRefs[c, r];
-                        componentRefs[c, r - vertOffset].SetLocation(new Vector2Int(r - vertOffset, c));
+                        componentRefs[c, r - vertOffset].SetLocation(new Vector2Int(c, r - vertOffset));
                         components[c, r] = null;
                         componentRefs[c, r] = null;
                     }
@@ -383,7 +343,7 @@ public class MatchGrid : MonoBehaviour
             }
             while(vertOffset > 0)
             {
-                CreateComponent(rows - vertOffset, c);
+                CreateComponent(c, rows - vertOffset);
                 vertOffset--;
             }
         }
@@ -430,7 +390,7 @@ public class MatchGrid : MonoBehaviour
             {
                 componentRefs[c, r] = swapComponentGrid[c, r];
                 components[c, r] = componentRefs[c, r].gameObject;
-                componentRefs[c, r].SetLocation(new Vector2Int(r, c));
+                componentRefs[c, r].SetLocation(new Vector2Int(c, r));
             }
         }
     }
@@ -448,13 +408,12 @@ public class MatchGrid : MonoBehaviour
     /// <summary>
     /// Returns a world position based off the row/column
     /// </summary>
-    /// <param name="row">Index of the row (left = 0, right = max - 1)</param>
-    /// <param name="column">Index of the column (bottom = 0, top = max - 1)</param>
+    /// <param name="columnRow"></param>
     /// <returns>Global coordinates centered around the indexed location</returns>
-    public Vector3 IndexToWorldPos(Vector2Int rowColumn)
+    public Vector3 IndexToWorldPos(Vector2Int columnRow)
     {
-        int row = rowColumn.x;
-        int column = rowColumn.y;
+        int column = columnRow.x;
+        int row = columnRow.y;
         return new Vector3(
             transform.position.x + transform.localScale.x * ((column + 0.5f) * (1.0f + padding)),
             transform.position.y + transform.localScale.y * ((row + 0.5f) * (1.0f + padding)),
@@ -485,48 +444,71 @@ public class MatchGrid : MonoBehaviour
         {
             for (int c = 0; c < columns; c++)
             {
-                componentRefs[c, r].SetLocation(new Vector2Int(r, c));
+                componentRefs[c, r].SetLocation(new Vector2Int(c, r));
             }
         }
     }
 
     /// <summary>
-    /// Sets the objective locations for the grid based on dragging a component
+    /// Sets the objective locations for all dragged that share a row or column with the dragged component
     /// </summary>
-    /// <param name="rowColumn">Original rowColumn of the component</param>
-    /// <param name="newRowColumn">Current rowColumn of the component</param>
-    public void DragPiece(Vector2Int rowColumn, Vector2Int newRowColumn)
+    /// <param name="columnRow">MatchComponent.columnRow</param>
+    /// <param name="newColumnRow">gridRef.WorldPosToIndex(mouseWorld - mouseOffset)</param>
+    public void DragAdjacentPieces(Vector2Int columnRow, Vector2Int newColumnRow)
     {
-        if (newRowColumn.x < 0 || newRowColumn.x >= rows || newRowColumn.y < 0 || newRowColumn.y >= columns) { return; }
-        if (newRowColumn.x != 0 && newRowColumn.y != 0) { return; }
-        if (newRowColumn.x == 0 && newRowColumn.y == 0) { return; }
-
-        if(newRowColumn.x < rowColumn.x)
+        // TODO: Discover why the branch is not properly resetting the positions on a failed move
+        // If the match is invalid, reset all adjacent pieces to their original positions
+        if ((newColumnRow.x < 0 || newColumnRow.x >= columns || newColumnRow.y < 0 || newColumnRow.y >= rows)
+        || (newColumnRow.x - columnRow.x != 0 && newColumnRow.y - columnRow.y != 0)
+        || newColumnRow == columnRow)
         {
-            for(int x = newRowColumn.x; x < rowColumn.x; x++)
+            for(int c = 0; c < columns; c++)
             {
+                if(c != columnRow.x)
+                {
+                    componentRefs[c, columnRow.x].SetObjectiveLocation(new Vector2Int(c, columnRow.x));
+                }
+            }
+            for(int r = 0; r < rows; r++)
+            {
+                if(r != columnRow.y)
+                {
+                    componentRefs[columnRow.y, r].SetObjectiveLocation(new Vector2Int(columnRow.y, r));
+                }
+            }
+            return;
+        }
 
+        // Set the position for all components in the same row or column besides the active one
+        // Move the row
+        for(int c = 0; c < columns; c++)
+        {
+            if(c >= newColumnRow.x && c < columnRow.x)
+            {
+                componentRefs[c, columnRow.y].SetObjectiveLocation(new Vector2Int(c + 1, columnRow.y));
+            }
+            else if(c > columnRow.x && c <= newColumnRow.x)
+            {
+                componentRefs[c, columnRow.y].SetObjectiveLocation(new Vector2Int(c - 1, columnRow.y));
+            }
+            else if(c != columnRow.x)
+            {
+                componentRefs[c, columnRow.y].SetObjectiveLocation(new Vector2Int(c, columnRow.y));
             }
         }
-        else if(newRowColumn.x > rowColumn.x)
+        for (int r = 0; r < rows; r++)
         {
-            for(int x = newRowColumn.x; x > rowColumn.x; x--)
+            if (r >= newColumnRow.y && r < columnRow.y)
             {
-
+                componentRefs[columnRow.x, r].SetObjectiveLocation(new Vector2Int(columnRow.x, r + 1));
             }
-        }
-        else if(newRowColumn.y < rowColumn.y)
-        {
-            for(int y = newRowColumn.y; y < rowColumn.y; y++)
+            else if(r > columnRow.y && r <= newColumnRow.y)
             {
-
+                componentRefs[columnRow.x, r].SetObjectiveLocation(new Vector2Int(columnRow.x, r - 1));
             }
-        }
-        else
-        {
-            for(int y = newRowColumn.y; y > rowColumn.y; y++)
+            else if(r != columnRow.y)
             {
-
+                componentRefs[columnRow.x, r].SetObjectiveLocation(new Vector2Int(columnRow.x, r));
             }
         }
     }
