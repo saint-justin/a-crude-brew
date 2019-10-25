@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 ﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"showFog":true,"showMaterialUpdate":false,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true},"in2DMode":true,"pivot":{"x":722.533203125,"y":299.5228576660156,"z":-81.125},"rotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"size":809.7059936523438,"orthographic":true}
+=======
+﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"showFog":true,"showMaterialUpdate":false,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true},"in2DMode":true,"pivot":{"x":630.7391967773438,"y":229.4485321044922,"z":-24.204904556274415},"rotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"size":589.1834106445313,"orthographic":true}
+>>>>>>> andrew-main-menu
