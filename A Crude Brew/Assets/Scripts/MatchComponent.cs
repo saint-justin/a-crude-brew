@@ -96,8 +96,6 @@ public class MatchComponent : MonoBehaviour
         Vector3 mouseWorld = gridRef.GetMousePosition();
         mouseOffset = mouseWorld - transform.position;
         currentObjectivePosition = mouseWorld - mouseOffset;
-
-        // CalcColumnAndRowBounds(columnRow);
     }
 
     /// <summary>
@@ -118,11 +116,11 @@ public class MatchComponent : MonoBehaviour
         drawLines = false;
 
         // TODO: Implement this as a parameter for CheckSwap
-        Vector2Int newColumnRow = gridRef.WorldPosToIndex(currentObjectivePosition);
+        Vector2Int newColumnRow = gridRef.WorldPosToIndex(transform.position);
         Debug.Log("newColumnRow.x = " + newColumnRow.x + ", newColumnRow.y = " + newColumnRow.y);
 
         // if swap doesn't work, revert object back to its original position
-        gridRef.CheckSwap(currentHardPosition, transform.position);
+        gridRef.CheckSwap(gridRef.WorldPosToIndex(currentHardPosition), gridRef.WorldPosToIndex(currentObjectivePosition));
     }
 
     /// <summary>

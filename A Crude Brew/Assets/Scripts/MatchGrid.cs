@@ -22,7 +22,6 @@ public class MatchGrid : MonoBehaviour
 
     public Plane gridPlane; // An xyz coordinate plane used to determine mouse collision; predefeined to be pointing in the -z plane
 
-    // the two following arrays must be the same length
     public Sprite[] componentSprites = new Sprite[6]; // Set to the array of sprites: Raindrop, Tooth, Vial, Feather, Horn, Yarn
 
     // Start is called before the first frame update
@@ -46,21 +45,6 @@ public class MatchGrid : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        for (int i = 0; i <= columns; i++)
-        {
-            Debug.DrawLine(
-                transform.position + new Vector3(i * transform.localScale.x * (1.0f + padding), 0, 0),
-                transform.position + new Vector3(i * transform.localScale.x * (1.0f + padding), rows * transform.localScale.y * (1.0f + padding), 0)
-                );
-        }
-        for (int i = 0; i <= rows; i++)
-        {
-            Debug.DrawLine(
-                transform.position + new Vector3(0, i * transform.localScale.y * (1.0f + padding), 0),
-                transform.position + new Vector3(columns * transform.localScale.x * (1.0f + padding), i * transform.localScale.y * (1.0f + padding), 0)
-                );
-        }*/
     }
 
     /// <summary>
@@ -124,11 +108,9 @@ public class MatchGrid : MonoBehaviour
     /// <param name="currentHardPosition">currentHardPosition of the MatchComponent that's being swapped</param>
     /// <param name="newPosition">transform.position of the MatchComponent that's being swapped</param>
     /// <returns>2D array of MatchComponents with the implemented swap if it's a valid swap; returns null for an invalid swap</returns>
-    private MatchComponent[,] BuildSwapArray(Vector3 currentHardPos, Vector3 newPos)
+    private MatchComponent[,] BuildSwapArray(Vector2Int originIndex, Vector2Int newIndex)
     {
         // Translates the locations to 2D grid coordinates
-        Vector2Int originIndex = WorldPosToIndex(currentHardPos);
-        Vector2Int newIndex = WorldPosToIndex(newPos);
         Vector2Int offset = newIndex - originIndex;
         MatchComponent tempComponent;
 
@@ -144,12 +126,18 @@ public class MatchGrid : MonoBehaviour
         }
 
         // A valid swap has been made; move the rows/columns, then return the swapped value
-        MatchComponent[,] swapComponentGrid = componentRefs;
+        MatchComponent[,] swapComponentGrid = new MatchComponent[columns, rows];
+        for(int c = 0; c < columns; c++)
+        {
+            for(int r = 0; r < rows; r++)
+            {
+                swapComponentGrid[c, r] = componentRefs[c, r];
+            }
+        }
 
         // Component was moved either left or right
         if(offset.x != 0)
         {
-            // Component was moved left
             if(offset.x < 0)
             {
                 for(int i = originIndex.x; i > originIndex.x + offset.x; i--)
@@ -159,7 +147,6 @@ public class MatchGrid : MonoBehaviour
                     swapComponentGrid[i - 1, originIndex.y] = tempComponent;
                 }
             }
-            // Component was moved right
             else
             {
                 for (int i = originIndex.x; i < originIndex.x + offset.x; i++)
@@ -173,7 +160,6 @@ public class MatchGrid : MonoBehaviour
         // Component was moved either up or down
         else 
         {
-            // Component was moved up
             if(offset.y > 0)
             {
                 for (int i = originIndex.y; i < originIndex.y + offset.y; i++)
@@ -183,7 +169,6 @@ public class MatchGrid : MonoBehaviour
                     swapComponentGrid[originIndex.x, i + 1] = tempComponent;
                 }
             }
-            // Component was moved down
             else
             {
                 for (int i = originIndex.y; i > originIndex.y + offset.y; i--)
@@ -205,9 +190,9 @@ public class MatchGrid : MonoBehaviour
     /// <param name="currentHardPos">currentHardPos of the MatchComponent being moved</param>
     /// <param name="newPos">transform.position of the MatchComponent being moved</param>
     /// <returns>True if a match was made, else returns false</returns>
-    public void CheckSwap(Vector3 currentHardPos, Vector3 newPos)
+    public void CheckSwap(Vector2Int originIndex, Vector2Int newIndex)
     {
-        MatchComponent[,] swapComponentGrid = BuildSwapArray(currentHardPos, newPos);
+        MatchComponent[,] swapComponentGrid = BuildSwapArray(originIndex, newIndex);
         // If a match was not made, make all pieces return to their currentHardPosition
         if (!HandleMatches(swapComponentGrid))
         {
@@ -466,14 +451,14 @@ public class MatchGrid : MonoBehaviour
             {
                 if(c != columnRow.x)
                 {
-                    componentRefs[c, columnRow.x].SetObjectiveLocation(new Vector2Int(c, columnRow.x));
+                    componentRefs[c, columnRow.y].SetObjectiveLocation(new Vector2Int(c, columnRow.y));
                 }
             }
             for(int r = 0; r < rows; r++)
             {
                 if(r != columnRow.y)
                 {
-                    componentRefs[columnRow.y, r].SetObjectiveLocation(new Vector2Int(columnRow.y, r));
+                    componentRefs[columnRow.x, r].SetObjectiveLocation(new Vector2Int(columnRow.x, r));
                 }
             }
             return;
