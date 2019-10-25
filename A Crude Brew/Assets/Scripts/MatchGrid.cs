@@ -6,23 +6,20 @@ public class MatchGrid : MonoBehaviour
 {
     public int columns;
     public int rows;
-
     public float padding = 0.2f;
-
-    public Vector3 mousePosition;
 
     public GameObject[] jars;
     public GameObject itemPrefab;
 
     private GameObject[,] components;
     private MatchComponent[,] componentRefs;
+    public Sprite[] componentSprites = new Sprite[6]; // Set to the array of sprites: Raindrop, Tooth, Vial, Feather, Horn, Yarn
 
     private int[,] matchKeeper; // Records 0 for no matches, or 3+ for the match size in the grid
-    private bool recheckFlag = false;
 
     public Plane gridPlane; // An xyz coordinate plane used to determine mouse collision; predefeined to be pointing in the -z plane
+    public Vector3 mousePosition;
 
-    public Sprite[] componentSprites = new Sprite[6]; // Set to the array of sprites: Raindrop, Tooth, Vial, Feather, Horn, Yarn
 
     // Start is called before the first frame update
     void Start()
@@ -50,8 +47,8 @@ public class MatchGrid : MonoBehaviour
     /// <summary>
     /// Creates a new random component at the indexed row and column
     /// </summary>
-    /// <param name="column"></param>
-    /// <param name="row"></param>
+    /// <param name="column">Column to place the component in (0 = left, columns - 1 = right)</param>
+    /// <param name="row">Row to place the component in (0 = bottom, rows - 1 = top)</param>
     public void CreateComponent(int column, int row)
     {
         GameObject newComponent = Instantiate(
@@ -60,14 +57,13 @@ public class MatchGrid : MonoBehaviour
             Quaternion.identity, //rotation
             gameObject.transform // parent
             );
-        newComponent.GetComponent<MatchComponent>().Initialize(gameObject, column, row);
+        newComponent.GetComponent<MatchComponent>().Initialize(gameObject, new Vector2Int(column, row));
 
         components[column, row] = newComponent;
         componentRefs[column, row] = newComponent.GetComponent<MatchComponent>();
 
         componentRefs[column, row].SetLocation(new Vector2Int(column, row));
 
-        // Select a random component type based off the length of the Component enum
         componentRefs[column, row].SetComponentType((Component)Random.Range(0, 6));
     }
 
@@ -90,7 +86,7 @@ public class MatchGrid : MonoBehaviour
     /// Casts a Vector3 global location to a 2D index in the grid
     /// </summary>
     /// <param name="position">Global coordinates of a component</param>
-    /// <returns>{ column, row }</returns>
+    /// <returns>Vector2Int(column, row)</returns>
     public Vector2Int WorldPosToIndex(Vector3 position)
     {
         Vector2 gridToComponent = new Vector2(position.x - transform.position.x,position.y - transform.position.y);
@@ -110,22 +106,18 @@ public class MatchGrid : MonoBehaviour
     /// <returns>2D array of MatchComponents with the implemented swap if it's a valid swap; returns null for an invalid swap</returns>
     private MatchComponent[,] BuildSwapArray(Vector2Int originIndex, Vector2Int newIndex)
     {
-        // Translates the locations to 2D grid coordinates
         Vector2Int offset = newIndex - originIndex;
         MatchComponent tempComponent;
 
-        // If the new position is outside the grid, return null
         if(newIndex.x < 0 || newIndex.x >= columns || newIndex.y < 0 || newIndex.y >= rows)
         {
             return null;
         }
-        // Return null if the component is swapping both rows/columns or neither
         if((offset.x == 0 && offset.y == 0) || (offset.x != 0 && offset.y != 0))
         {
             return null;
         }
 
-        // A valid swap has been made; move the rows/columns, then return the swapped value
         MatchComponent[,] swapComponentGrid = new MatchComponent[columns, rows];
         for(int c = 0; c < columns; c++)
         {
@@ -187,13 +179,11 @@ public class MatchGrid : MonoBehaviour
     /// If a match is made, the components are added into the jar
     /// If a match is not made, all pieces return to their original grid location
     /// </summary>
-    /// <param name="currentHardPos">currentHardPos of the MatchComponent being moved</param>
-    /// <param name="newPos">transform.position of the MatchComponent being moved</param>
-    /// <returns>True if a match was made, else returns false</returns>
+    /// <param name="originIndex">gridRef.WorldPosToIndex(currentHardPosition)</param>
+    /// <param name="newIndex">gridRef.WorldPosToIndex(currentObjectivePosition);</param>
     public void CheckSwap(Vector2Int originIndex, Vector2Int newIndex)
     {
         MatchComponent[,] swapComponentGrid = BuildSwapArray(originIndex, newIndex);
-        // If a match was not made, make all pieces return to their currentHardPosition
         if (!HandleMatches(swapComponentGrid))
         {
             ReturnToHardPos();
@@ -203,7 +193,7 @@ public class MatchGrid : MonoBehaviour
     /// <summary>
     /// Checks all rows and columns for potential matches; saves any matches made in the 2D array matchKeeper
     /// </summary>
-    /// <param name="swapComponentGrid">2D grid of components to check for a match (can set to componentRefs for current grid)</param>
+    /// <param name="swapComponentGrid">2D grid of components to check for a match, or componentRefs for no swap (initialization or combos)</param>
     /// <returns>True if at least one match was made, else false</returns>
     private bool CheckGridForMatches(MatchComponent[,] swapComponentGrid)
     {
@@ -291,7 +281,7 @@ public class MatchGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Deletes all objects that have a completed match from the grid
+    /// Deletes all objects that have a completed match from the grid, makes the components fall down, and initializes new components at the top of the grid
     /// </summary>
     public void RemoveMatches()
     {
@@ -344,7 +334,7 @@ public class MatchGrid : MonoBehaviour
     /// <summary>
     /// Checks to see if the given grid has matches; if so, it cements the swap locations and removes the pieces from the swap
     /// </summary>
-    /// <param name="swapComponentGrid"></param>
+    /// <param name="swapComponentGrid">2D grid containing a swap, or componentRefs if no swap was made (initialization or combos)</param>
     /// <returns>True if a match was made, false if no matches were made</returns>
     public bool HandleMatches(MatchComponent[,] swapComponentGrid)
     {
@@ -363,7 +353,7 @@ public class MatchGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO: Sets the objective and hard positions of any components post-swap that do not match the current grid state
+    /// Sets the objective and hard positions of any components post-swap that do not match the current grid state
     /// </summary>
     /// <param name="swapComponentGrid">2D grid containing the swap</param>
     public void ConfirmSwap(MatchComponent[,] swapComponentGrid)
@@ -393,8 +383,8 @@ public class MatchGrid : MonoBehaviour
     /// <summary>
     /// Returns a world position based off the row/column
     /// </summary>
-    /// <param name="columnRow"></param>
-    /// <returns>Global coordinates centered around the indexed location</returns>
+    /// <param name="columnRow">Vector2Int(column, row) of the grid</param>
+    /// <returns>Global coordinates centered at the indexed location</returns>
     public Vector3 IndexToWorldPos(Vector2Int columnRow)
     {
         int column = columnRow.x;
@@ -481,6 +471,7 @@ public class MatchGrid : MonoBehaviour
                 componentRefs[c, columnRow.y].SetObjectiveLocation(new Vector2Int(c, columnRow.y));
             }
         }
+        // Move the column
         for (int r = 0; r < rows; r++)
         {
             if (r >= newColumnRow.y && r < columnRow.y)
