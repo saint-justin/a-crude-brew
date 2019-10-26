@@ -29,12 +29,29 @@ public class CauldronManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightBracket))
             AddItems(new int[6] { 1, 1, 1, 1, 1, 1 });
 
-        CheckForFilledOrders();
+        // check if cauldron is empty before check
+        if(!CheckCounterEmpty())
+            CheckForFilledOrders();
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             CheckForEmptyCauldron();
         }
+    }
+
+    /// <summary>
+    /// Checks if the cauldron is empty (if no components have an amount greater than 0)
+    /// </summary>
+    /// <returns>If the cauldron is empty</returns>
+    bool CheckCounterEmpty()
+    {
+
+        // for loop to see if there are any components in the cauldron
+        for (int i = 0; i < CounterComponents.Count; i++)
+            if (CounterComponents[i] > 0) return false;
+
+        // else
+        return true;
     }
 
     /// <summary>

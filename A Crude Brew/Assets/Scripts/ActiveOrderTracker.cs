@@ -131,7 +131,7 @@ public class ActiveOrderTracker : MonoBehaviour
         // If initialized in Start(), the reference to Score.GetComponent<ScoreSystem>() is lost
         if (scoreRef == null)
         {
-            scoreRef = GameObject.Find("Score").GetComponent<ScoreSystem>();
+            scoreRef = orderManager.GetScoreRef();
         }
 
         // multiply by 25 and add score
