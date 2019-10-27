@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-sceneSetups: []
-=======
 sceneSetups:
-- path: Assets/Scenes/andrew_score_fixes_copy.unity
+- path: Assets/Scenes/justin_scene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
->>>>>>> andrew-score-additions

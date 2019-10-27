@@ -1,9 +1,9 @@
-sceneSetups:
 <<<<<<< HEAD
-- path: Assets/Scenes/TutorialScene.unity
+sceneSetups: []
 =======
-- path: Assets/Scenes/main_menu.unity
->>>>>>> andrew-main-menu
+sceneSetups:
+- path: Assets/Scenes/andrew_score_fixes_copy.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
+>>>>>>> andrew-score-additions
