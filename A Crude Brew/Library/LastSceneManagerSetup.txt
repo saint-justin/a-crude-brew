@@ -1,9 +1,1 @@
-sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/TutorialScene.unity
-=======
-- path: Assets/Scenes/main_menu.unity
->>>>>>> andrew-main-menu
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
+sceneSetups: []

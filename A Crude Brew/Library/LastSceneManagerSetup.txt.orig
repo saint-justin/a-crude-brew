@@ -1,9 +1,9 @@
 sceneSetups:
 <<<<<<< HEAD
-- path: Assets/Scenes/andrew_score_scene_copy.unity
+- path: Assets/Scenes/TutorialScene.unity
 =======
-- path: Assets/Scenes/SceneKevin.unity
->>>>>>> kevin-grid
+- path: Assets/Scenes/main_menu.unity
+>>>>>>> andrew-main-menu
   isLoaded: 1
   isActive: 1
   isSubScene: 0
