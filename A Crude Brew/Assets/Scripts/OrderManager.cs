@@ -26,7 +26,7 @@ public class OrderManager : MonoBehaviour
         ReadInOrders(@"Assets\Scripts\OrderTextFiles\order_inputs.txt");
 
         // Setup score vars
-        scoreRef = GameObject.Find("Score").GetComponent<ScoreSystem>();
+        scoreRef = scoreObj.GetComponent<ScoreSystem>();
     }
 
     // Update is called once per frame
@@ -67,6 +67,7 @@ public class OrderManager : MonoBehaviour
 
             // Push the order info into the order object
             newOrder.GetComponent<OrderInfo>().SetOrderInfo(orderSplit[0], orderSplit[1]);
+            newOrder.GetComponent<ActiveOrderTracker>().scoreRef = scoreRef;
 
             // Add this to the list of orders
             orders.Add(newOrder);
