@@ -66,6 +66,7 @@
     <Compile Include="Assets\Andrew_Scripts\ComponentGrid.cs" />
     <Compile Include="Assets\Andrew_Scripts\GridComponent.cs" />
     <Compile Include="Assets\Andrew_Scripts\MenuScript.cs" />
+    <Compile Include="Assets\Andrew_Scripts\ScoreScreenMethods.cs" />
     <Compile Include="Assets\Andrew_Scripts\ScoreSystem.cs" />
     <Compile Include="Assets\Scripts\ActiveOrderTracker.cs" />
     <Compile Include="Assets\Scripts\CauldronManager.cs" />
