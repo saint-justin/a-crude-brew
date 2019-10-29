@@ -6,12 +6,18 @@ public class Jar : MonoBehaviour
 {
     private int maxCapacity = 20;
     public int currentCapacity = 0;
+    private CauldronManager cauldron;
+    private int[] modifier;
+    public int jarIndex;
 
     // Start is called before the first frame update
     void Start()
     {
         currentCapacity = 0;
         CalcLiquidHeight();
+        cauldron = GameObject.Find("CauldronActives").GetComponent<CauldronManager>();
+        modifier = new int[6];
+        modifier[jarIndex] = 1;
     }
 
     // Update is called once per frame
@@ -45,6 +51,15 @@ public class Jar : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void OnMouseDown()
+    {
+        // Check if there's anything in the jar being clicked
+        if (RemoveComponent())
+        {
+            cauldron.GetComponent<CauldronManager>().AddItems(modifier);
+        }
     }
 
     /// <summary>
