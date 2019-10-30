@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using UnityEngine; 
+using UnityEngine;
+using UnityEngine.UI;
 
 public class OrderManager : MonoBehaviour
 {
@@ -18,7 +19,11 @@ public class OrderManager : MonoBehaviour
     public GameObject scoreObj;
     private ScoreSystem scoreRef;
 
-    
+    // Failed order tracking
+    public List<RawImage> failedOrderIcons;
+    public Texture failedOrderTexture;
+    public int failedOrders = 0;
+
     // Start is called before the first frame update
     void Start()
     {

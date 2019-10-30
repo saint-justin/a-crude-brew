@@ -14,12 +14,19 @@ public class ActiveOrderTracker : MonoBehaviour
 
     public List<GameObject> orderIcons;    // Populated w/ the three order icons
     public GameObject orderText;           // Populated w/ the name of the order
-    public GameObject orderProgressBar;    // Populated w/ the parent progress bar object
+
 
     public OrderManager orderManager;      // Reference to the existing parent object's orderManager script 
     public ScoreSystem scoreRef;
 
-    private int i = 0;
+    public GameObject parentTimer;         // Populated w/ the parent progress bar object
+    private RectTransform innerTimer;           // Populated w/ the inner time component
+    private float initialWidth;
+    private float orderLength = 10.0f;
+    private float timeElapsed;
+
+    public Texture failedOrderTexture;
+    public List<RawImage> failedOrderIcons;
 
     // Start is called before the first frame update
     void Start()
@@ -34,8 +41,7 @@ public class ActiveOrderTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // TODO: Add in the progress bar ticking away and possible updating w/ green for sections that have been met from the current brew
-        i++;
+        UpdateTimer();
     }
 
     /// <summary>
@@ -56,16 +62,21 @@ public class ActiveOrderTracker : MonoBehaviour
             children.Add(child.gameObject);
         }
         orderIcons = new List<GameObject>() { children[1], children[2], children[3] };
-        orderProgressBar = children[4];
+        parentTimer = children[4];
         orderText = children[0];
         orderText.GetComponent<Text>().text = orderInfo.GetOrderName();
 
+        // Set the timer up
+        innerTimer = parentTimer.transform.GetChild(0).gameObject.GetComponent<RawImage>().GetComponent<RectTransform>();
+        initialWidth = innerTimer.rect.width;
+        timeElapsed = 0.0f;
 
-
-        // Get refereence to the OrderManager object
+        // Get reference to the OrderManager object
         orderManager = gameObject.transform.parent.gameObject.GetComponent<OrderManager>();
 
-        int four = 3;
+        // Set up for order failure
+        failedOrderIcons = orderManager.failedOrderIcons;
+        failedOrderTexture = orderManager.failedOrderTexture;
     }
 
     /// <summary>
@@ -137,8 +148,43 @@ public class ActiveOrderTracker : MonoBehaviour
         // multiply by 25 and add score
         scoreRef.AddScore(sum * 25);
 
+        // Mark the order as done
+        OrderComplete();
+    } 
 
+    /// <summary>
+    /// Update the timer based on how long it's been in deltatime since the last update
+    /// </summary>
+    private void UpdateTimer()
+    {
+        timeElapsed += Time.deltaTime;
+        if (orderLength > timeElapsed)
+        {
+            parentTimer.transform.GetChild(0).localScale = new Vector3(Mathf.Lerp(0.0f, 1.0f, (orderLength - timeElapsed) / orderLength), 0.5f, 1.0f);
+        }
+        else
+        {
+            OrderFailed();
+        }
+    }
+
+    /// <summary>
+    /// Function that fires when a given order is not completed within it's timeframe;
+    /// </summary>
+    private void OrderFailed()
+    {
+        failedOrderIcons[orderManager.failedOrders].texture = failedOrderTexture;
+        orderManager.failedOrders++; 
+
+        OrderComplete();
+    }
+
+    /// <summary>
+    /// Call this to destroy the order w/ fancy VFX
+    /// </summary>
+    private void OrderComplete()
+    {
         //TODO: Add some fancy VFX in the future here
         Destroy(gameObject);
-    } 
+    }
 }
