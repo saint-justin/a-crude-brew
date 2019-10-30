@@ -30,14 +30,22 @@ public struct HighScore : IComparable<HighScore>
 public class ScoreScreenMethods : MonoBehaviour
 {
     public UnityEngine.Object sceneOnPlay;
+    public UnityEngine.Object menuScene;
+
     private int score;
     private List<HighScore> scores;
     private List<GameObject> scoreObjs;
     private readonly string filePath = @"Assets\Andrew_Scripts\Scores\scores.csv";
     public GameObject listScorePrefab;
     public GameObject scoresPanel;
-    private string nameToAdd;
     public RectTransform panelTransform;
+
+    private string nameToAdd;
+    public GameObject nameForm;
+    private InputField input;
+    private Button submitButton;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +56,10 @@ public class ScoreScreenMethods : MonoBehaviour
         scoresPanel = scoresPanel != null ? scoresPanel : GameObject.Find("Panel");
         panelTransform = scoresPanel.GetComponent<RectTransform>();
         ReadScores(filePath);
+
+        nameForm = nameForm != null ? nameForm : GameObject.Find("Name Form");
+        input = nameForm.GetComponentInChildren<InputField>();
+        submitButton = nameForm.GetComponentInChildren<Button>();
     }
 
     // Update is called once per frame
@@ -65,6 +77,10 @@ public class ScoreScreenMethods : MonoBehaviour
     // adds score to list of scores and writes it to a file
     public void SubmitScore()
     {
+        // if user didn't provide a name, don't do anything
+        if (nameToAdd == null || nameToAdd.Length == 0)
+            return;
+
         // add score
         scores.Add(new HighScore(nameToAdd, score));
 
@@ -73,6 +89,10 @@ public class ScoreScreenMethods : MonoBehaviour
 
         // write current list of scores to file
         WriteScores(filePath);
+
+        // prevent user from double submitting their score by disabling the score saving inputs
+        input.interactable = false;
+        submitButton.interactable = false;
     }
 
     public void PlayAgain()
@@ -80,9 +100,9 @@ public class ScoreScreenMethods : MonoBehaviour
         SceneManager.LoadScene(sceneOnPlay.name);
     }
 
-    public void ExitGame()
+    public void GoToMenu()
     {
-        Application.Quit();
+        SceneManager.LoadScene(menuScene.name);
     }
 
     // read scores from scores file
