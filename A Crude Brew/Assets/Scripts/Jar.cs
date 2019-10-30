@@ -6,6 +6,7 @@ public class Jar : MonoBehaviour
 {
     private int maxCapacity = 20;
     public int currentCapacity = 0;
+    private float currentCapacityLerp = 0;
     private CauldronManager cauldron;
     private int[] modifier;
     public int jarIndex;
@@ -14,6 +15,7 @@ public class Jar : MonoBehaviour
     void Start()
     {
         currentCapacity = 0;
+        currentCapacityLerp = 0;
         CalcLiquidHeight();
         cauldron = GameObject.Find("CauldronActives").GetComponent<CauldronManager>();
         modifier = new int[6];
@@ -23,7 +25,10 @@ public class Jar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CalcLiquidHeight();
+        if(currentCapacityLerp != currentCapacity)
+        {
+            CalcLiquidHeight();
+        }
     }
 
     /// <summary>
@@ -53,6 +58,9 @@ public class Jar : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Moves a component from the jar to the cauldron if there's at least one component in the jar
+    /// </summary>
     public void OnMouseDown()
     {
         // Check if there's anything in the jar being clicked
@@ -67,6 +75,28 @@ public class Jar : MonoBehaviour
     /// </summary>
     private void CalcLiquidHeight()
     {
-        transform.GetChild(0).localScale = new Vector3(1, 0.01f + 0.99f * currentCapacity / maxCapacity, 1);
+        if(currentCapacityLerp - currentCapacity < 0.005f && currentCapacityLerp - currentCapacity > -0.005f)
+        {
+            currentCapacityLerp = currentCapacity;
+        }
+        else if(currentCapacityLerp < currentCapacity)
+        {
+            currentCapacityLerp = Mathf.Lerp(currentCapacityLerp, currentCapacity, 0.02f);
+        }
+        else
+        {
+            currentCapacityLerp = Mathf.Lerp(currentCapacityLerp, currentCapacity, 0.10f);
+        }
+        transform.GetChild(0).localScale = new Vector3(1, 0.01f + 0.99f * currentCapacityLerp / maxCapacity, 1);
+    }
+
+    /// <summary>
+    /// Clears all contents from the jar and resets its fluid height
+    /// </summary>
+    public void EmptyJar()
+    {
+        currentCapacity = 0;
+        currentCapacityLerp = 0;
+        transform.GetChild(0).localScale = new Vector3(1, 0.01f, 1);
     }
 }

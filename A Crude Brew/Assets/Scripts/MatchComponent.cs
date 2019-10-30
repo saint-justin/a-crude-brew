@@ -32,7 +32,17 @@ public class MatchComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = currentObjectivePosition;
+        if(transform.position != currentObjectivePosition)
+        {
+            if(Vector3.Distance(transform.position, currentObjectivePosition) < 0.001f)
+            {
+                transform.position = currentObjectivePosition;
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, currentObjectivePosition, 0.3f);
+            }
+        }
     }
 
     /// <summary>
