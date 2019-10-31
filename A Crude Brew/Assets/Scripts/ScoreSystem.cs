@@ -6,7 +6,7 @@ using UnityEngine.UI;
 // attach this to score display
 public class ScoreSystem : MonoBehaviour
 {
-    private int score;
+    private static int score;
     private Text text;
     private Text scorePopupText; // reference to text component of the popup element
     // popup element says "+[insert score just added] here" every time player adds to their score
@@ -21,13 +21,13 @@ public class ScoreSystem : MonoBehaviour
     private float totalAfterFadeOutTime; // calc'd total of fadeInTime + popupTime + fadeOutTime - in Start()
 
     // add to player's current total score and popup how much got added
-    public void AddScore(int score)
+    public void AddScore(int _score)
     {
-        if (score > 0) // only add scores, no score subtraction
+        if (_score > 0) // only add scores, no score subtraction
         {
-            this.score += score;
-            text.text = $"Score: {this.score}";
-            PopUpScore(score); // start up popup
+            score += _score;
+            text.text = $"Score: {score}";
+            PopUpScore(_score); // start up popup
         }
         
     }
@@ -41,7 +41,7 @@ public class ScoreSystem : MonoBehaviour
     }
 
     // returns the player's current total score
-    public int GetScore()
+    public static int GetScore()
     {
         return score;
     }
