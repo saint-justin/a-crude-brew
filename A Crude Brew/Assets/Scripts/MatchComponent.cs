@@ -78,6 +78,11 @@ public class MatchComponent : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
+        if(!gridRef.AcceptMouseInput())
+        {
+            return;
+        }
+
         Vector3 mouseWorld = gridRef.GetMousePosition();
         mouseOffset = mouseWorld - transform.position;
         currentObjectivePosition = mouseWorld - mouseOffset;
@@ -90,6 +95,11 @@ public class MatchComponent : MonoBehaviour
     /// </summary>
     private void OnMouseDrag()
     {
+        if(!gridRef.AcceptMouseInput())
+        {
+            return;
+        }
+
         Vector3 mouseWorld = gridRef.GetMousePosition();
         currentObjectivePosition = mouseWorld - mouseOffset + new Vector3(0.0f, 0.0f, -0.001f);
         gridRef.DragAdjacentPieces(columnRow, gridRef.WorldPosToIndex(mouseWorld - mouseOffset));
@@ -100,6 +110,11 @@ public class MatchComponent : MonoBehaviour
     /// </summary>
     private void OnMouseUp()
     {
+        if (!gridRef.AcceptMouseInput())
+        {
+            return;
+        }
+
         gridRef.SetSelectionCross(new Vector2Int(9999, 9999));
         Vector2Int newColumnRow = gridRef.WorldPosToIndex(currentObjectivePosition);
         // If swap doesn't work, revert object back to its original position
@@ -117,6 +132,17 @@ public class MatchComponent : MonoBehaviour
         currentHardPosition = gridRef.IndexToWorldPos(columnRow);
         currentObjectivePosition = currentHardPosition;
         transform.position = currentObjectivePosition;
+    }
+
+    /// <summary>
+    /// Sets the currentHardPosition and currentObjectivePosition at the given column/row
+    /// </summary>
+    /// <param name="columnRow">new Vector2Int(column, row)</param>
+    public void SetLocationNoTransform(Vector2Int columnRow)
+    {
+        this.columnRow = columnRow;
+        currentHardPosition = gridRef.IndexToWorldPos(columnRow);
+        currentObjectivePosition = currentHardPosition;
     }
 
     /// <summary>
