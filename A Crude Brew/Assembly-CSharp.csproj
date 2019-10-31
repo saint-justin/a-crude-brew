@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\ActiveOrderTracker.cs" />
     <Compile Include="Assets\Scripts\CauldronManager.cs" />
     <Compile Include="Assets\Scripts\Component.cs" />
+    <Compile Include="Assets\Scripts\DestroyAnimation.cs" />
     <Compile Include="Assets\Scripts\Jar.cs" />
     <Compile Include="Assets\Scripts\MatchComponent.cs" />
     <Compile Include="Assets\Scripts\MatchGrid.cs" />
