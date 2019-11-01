@@ -10,6 +10,7 @@ public class Jar : MonoBehaviour
     private CauldronManager cauldron;
     private int[] modifier;
     public int jarIndex;
+    public AudioClip onJarClick;
 
     // Start is called before the first frame update
     void Start()
@@ -66,6 +67,7 @@ public class Jar : MonoBehaviour
         // Check if there's anything in the jar being clicked
         if (RemoveComponent())
         {
+            GameObject.Find("AudioManager").GetComponent<AudioSource>().PlayOneShot(onJarClick);
             cauldron.GetComponent<CauldronManager>().AddItems(modifier);
         }
     }

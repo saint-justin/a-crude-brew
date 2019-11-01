@@ -14,6 +14,8 @@ public class CauldronManager : MonoBehaviour
 
     public GameObject emptyCauldronButton;
 
+    public AudioClip onEmptyCauldron;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -112,6 +114,8 @@ public class CauldronManager : MonoBehaviour
         {
             CounterComponents[i] = 0;
         }
+
+        GameObject.Find("AudioManager").GetComponent<AudioSource>().PlayOneShot(onEmptyCauldron);
 
         UpdateVisuals();
     }

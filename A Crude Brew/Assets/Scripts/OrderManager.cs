@@ -29,6 +29,8 @@ public class OrderManager : MonoBehaviour
     private int orderIncrementer = 0;
     string[] textOrders;
 
+    public AudioClip onOrderFill;
+
     // Start is called before the first frame update
     void Start()
     {

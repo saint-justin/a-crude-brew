@@ -159,6 +159,8 @@ public class ActiveOrderTracker : MonoBehaviour
 
         // multiply by 25 and add score
         scoreRef.AddScore(sum * 25);
+        // only on objects other than the piece moved, play audio - this is the quick and dirty implementation
+        GameObject.Find("AudioManager").GetComponent<AudioSource>().PlayOneShot(orderManager.onOrderFill);
 
         // Mark the order as done
         OrderComplete();

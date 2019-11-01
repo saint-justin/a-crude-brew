@@ -25,6 +25,10 @@ public class MatchGrid : MonoBehaviour
     private bool initialized = false;
     private int framesBeforeAcceptInput;
 
+    public AudioClip onComponentPlace;
+    public AudioClip onComponentSwap;
+    public AudioClip onMatch;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -196,6 +200,7 @@ public class MatchGrid : MonoBehaviour
     }
 
     /// <summary>
+    /// <summary>
     /// Reads in a component swap and checks if the swap results in a match
     /// If a match is made, the components are added into the jar
     /// If a match is not made, all pieces return to their original grid location
@@ -326,6 +331,9 @@ public class MatchGrid : MonoBehaviour
                             Quaternion.identity, //rotation
                             gameObject.transform // parent
                             );
+
+                        // play match audio
+                        GameObject.Find("AudioManager").GetComponent<AudioSource>().PlayOneShot(onMatch);
                     }
                     Destroy(components[c, r]);
 
@@ -370,6 +378,8 @@ public class MatchGrid : MonoBehaviour
         if (CheckGridForMatches(swapComponentGrid))
         {
             ConfirmSwap(swapComponentGrid);
+            // play placement of component audio
+            GameObject.Find("AudioManager").GetComponent<AudioSource>().PlayOneShot(onComponentPlace);
             RemoveMatches();
             framesBeforeAcceptInput = 20;
             return true;
