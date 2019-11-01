@@ -33,15 +33,17 @@ public class ScoreScreenMethods : MonoBehaviour
     public UnityEngine.Object menuScene;
 
     private int score;
+
     private List<HighScore> scores;
     private List<GameObject> scoreObjs;
-    private readonly string filePath = @"Assets\Andrew_Scripts\Scores\scores.csv";
+    private readonly string filePath = @"Assets\Scripts\Scores\scores.csv";
     public GameObject listScorePrefab;
     public GameObject scoresPanel;
     public RectTransform panelTransform;
 
     private string nameToAdd;
     public GameObject nameForm;
+    private Text scoreText;
     private InputField input;
     private Button submitButton;
 
@@ -58,8 +60,11 @@ public class ScoreScreenMethods : MonoBehaviour
         ReadScores(filePath);
 
         nameForm = nameForm != null ? nameForm : GameObject.Find("Name Form");
+        scoreText = nameForm.GetComponentInChildren<Text>();
         input = nameForm.GetComponentInChildren<InputField>();
         submitButton = nameForm.GetComponentInChildren<Button>();
+
+        scoreText.text = $"You got a score of {score}!";
     }
 
     // Update is called once per frame
