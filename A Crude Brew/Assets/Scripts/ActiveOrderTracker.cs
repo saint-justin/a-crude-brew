@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ActiveOrderTracker : MonoBehaviour
 {
@@ -9,24 +10,30 @@ public class ActiveOrderTracker : MonoBehaviour
     // Component attached to the order's visualized gameobject
     // -------------------------------------------------------
 
-    public OrderInfo orderInfo;            // Contains all the necessary info about the order
+    public OrderInfo orderInfo;             // Contains all the necessary info about the order
     int orderNumber;
 
-    public List<GameObject> orderIcons;    // Populated w/ the three order icons
-    public GameObject orderText;           // Populated w/ the name of the order
+    public List<GameObject> orderIcons;     // Populated w/ the three order icons
+    public GameObject orderText;            // Populated w/ the name of the order
 
 
-    public OrderManager orderManager;      // Reference to the existing parent object's orderManager script 
+    public OrderManager orderManager;       // Reference to the existing parent object's orderManager script 
     public ScoreSystem scoreRef;
 
-    public GameObject parentTimer;         // Populated w/ the parent progress bar object
-    private RectTransform innerTimer;           // Populated w/ the inner time component
+    public GameObject parentTimer;          // Populated w/ the parent progress bar object
+    private RectTransform innerTimer;       // Populated w/ the inner time component
     private float initialWidth;
-    private float orderLength = 10.0f;
+    private float orderLength = 20.0f;
     private float timeElapsed;
 
     public Texture failedOrderTexture;
     public List<RawImage> failedOrderIcons;
+
+    private Vector3 oldPosition;
+    private Vector3 targetPosition;
+    private float timeSinceLerpStart = 0.0f;
+    private float lerpTime = 0.5f;
+    private bool moving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +49,11 @@ public class ActiveOrderTracker : MonoBehaviour
     void Update()
     {
         UpdateTimer();
+
+        if (moving)
+        {
+            ContinueMoving();
+        }
     }
 
     /// <summary>
@@ -118,7 +130,7 @@ public class ActiveOrderTracker : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the local position of this item's gameObject based on which spot it's in
+    /// Snaps the local position of this item's gameObject based on which spot it's in
     /// </summary>
     /// <param name="orderNo"></param>
     void UpdatePosition(int _orderNumber)
@@ -176,6 +188,11 @@ public class ActiveOrderTracker : MonoBehaviour
         failedOrderIcons[orderManager.failedOrders].texture = failedOrderTexture;
         orderManager.failedOrders++; 
 
+        if (orderManager.failedOrders == 3)
+        {
+            SceneManager.LoadScene("andrew_scoreboard");
+        }
+
         OrderComplete();
     }
 
@@ -185,6 +202,36 @@ public class ActiveOrderTracker : MonoBehaviour
     private void OrderComplete()
     {
         //TODO: Add some fancy VFX in the future here
+        orderManager.RemoveOrder(orderNumber);
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Start lerping this item up
+    /// </summary>
+    public void MoveUp()
+    {
+        orderNumber--;
+        oldPosition = this.transform.localPosition;
+        targetPosition = new Vector3(transform.localPosition.x, transform.localPosition.y - (orderNumber * 20), transform.localPosition.z);
+        moving = true;
+    }
+
+    /// <summary>
+    /// Function used to lerp the position of this order up
+    /// </summary>
+    private void ContinueMoving()
+    {
+        timeSinceLerpStart += Time.deltaTime;
+
+        if(timeSinceLerpStart >= lerpTime)
+        {
+            this.transform.localPosition = targetPosition;
+            moving = false;
+        }
+        else
+        {
+            this.transform.localPosition = Vector3.Lerp(oldPosition, targetPosition, timeSinceLerpStart / lerpTime);
+        }
     }
 }
