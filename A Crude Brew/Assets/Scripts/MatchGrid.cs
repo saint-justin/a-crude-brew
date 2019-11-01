@@ -16,12 +16,14 @@ public class MatchGrid : MonoBehaviour
     private GameObject[,] components;
     private MatchComponent[,] componentRefs;
     public Sprite[] componentSprites = new Sprite[6]; // Set to the array of sprites: Raindrop, Tooth, Vial, Feather, Horn, Yarn
+    public GameObject[] destroyAnimations = new GameObject[6];
 
     private int[,] matchKeeper; // Records 0 for no matches, or 3+ for the match size in the grid
 
     public Plane gridPlane; // An xyz coordinate plane used to determine mouse collision; predefeined to be pointing in the -z plane
     public Vector3 mousePosition;
-
+    private bool initialized = false;
+    private int framesBeforeAcceptInput;
 
     // Start is called before the first frame update
     void Start()
@@ -38,12 +40,23 @@ public class MatchGrid : MonoBehaviour
         }
         gridPlane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), transform.position);
 
-        HandleMatches(componentRefs);
+        while (HandleMatches(componentRefs)); // Recursively handle matches until there are no more remaining
+        CementGrid();
+        initialized = true;
+        framesBeforeAcceptInput = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(framesBeforeAcceptInput > 0)
+        {
+            if(framesBeforeAcceptInput == 1)
+            {
+                HandleMatches(componentRefs);
+            }
+            framesBeforeAcceptInput--;
+        }
     }
 
     /// <summary>
@@ -305,6 +318,15 @@ public class MatchGrid : MonoBehaviour
                 {
                     // A match was made; add the component to its corresponding jar
                     jars[(int)componentRefs[c, r].type].GetComponent<Jar>().AddComponent();
+                    if(initialized)
+                    {
+                        Instantiate(
+                            destroyAnimations[(int)componentRefs[c, r].type], // prefab
+                            IndexToWorldPos(componentRefs[c, r].columnRow), //position
+                            Quaternion.identity, //rotation
+                            gameObject.transform // parent
+                            );
+                    }
                     Destroy(components[c, r]);
 
                     // Increment vertOffset instead of r since r contained a destroyed component
@@ -318,25 +340,19 @@ public class MatchGrid : MonoBehaviour
                     {
                         components[c, r - vertOffset] = components[c, r];
                         componentRefs[c, r - vertOffset] = componentRefs[c, r];
-                        componentRefs[c, r - vertOffset].SetLocation(new Vector2Int(c, r - vertOffset));
+                        componentRefs[c, r - vertOffset].SetLocationNoTransform(new Vector2Int(c, r - vertOffset));
                         components[c, r] = null;
                         componentRefs[c, r] = null;
                     }
                 }
             }
-            while(vertOffset > 0)
+            for(int i = 0; i < vertOffset; i++)
             {
-                CreateComponent(c, rows - vertOffset);
-                vertOffset--;
+                CreateComponent(c, rows - vertOffset + i);
+                componentRefs[c, rows - vertOffset + i].transform.position = IndexToWorldPos(new Vector2Int(c, rows + i));
             }
         }
         matchKeeper = new int[columns, rows];
-
-        // Set the transform.position, currentHardPosition and currentObjectivePosition of all match components to their current row/column
-        CementGrid();
-
-        // Recursively test matches for combos
-        HandleMatches(componentRefs);
     }
 
     /// <summary>
@@ -355,6 +371,7 @@ public class MatchGrid : MonoBehaviour
         {
             ConfirmSwap(swapComponentGrid);
             RemoveMatches();
+            framesBeforeAcceptInput = 20;
             return true;
         }
         return false;
@@ -419,7 +436,7 @@ public class MatchGrid : MonoBehaviour
 
     /// <summary>
     /// Set the currentHardPosition and currentObjectivePosition for all components equal to their row and column position
-    /// Called by ConfirmSwap(...) when a match is successfully made
+    /// Called by the Start() method when no matches exist anymore
     /// </summary>
     public void CementGrid()
     {
@@ -495,5 +512,14 @@ public class MatchGrid : MonoBehaviour
                 componentRefs[columnRow.x, r].SetObjectiveLocation(new Vector2Int(columnRow.x, r));
             }
         }
+    }
+
+    /// <summary>
+    /// Function that ensures components cannot be moved before match combos are finished
+    /// </summary>
+    /// <returns>True if the mouse input can be taken, else false</returns>
+    public bool AcceptMouseInput()
+    {
+        return framesBeforeAcceptInput <= 0;
     }
 }

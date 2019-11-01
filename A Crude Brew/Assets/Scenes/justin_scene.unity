@@ -1034,6 +1034,42 @@ PrefabInstance:
       propertyPath: highlightColumn
       value: 
       objectReference: {fileID: 1536279657}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[3]
+      value: 
+      objectReference: {fileID: 2307849059808830889, guid: 96ce718d78a47b84d80e9ce39e2e3b18,
+        type: 3}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[4]
+      value: 
+      objectReference: {fileID: 1149194017435852092, guid: 59a55fbdae9edef4aa026ef3133f7f75,
+        type: 3}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[0]
+      value: 
+      objectReference: {fileID: 730111847377573648, guid: f506018b63a05dc47b08bc13b621934c,
+        type: 3}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[1]
+      value: 
+      objectReference: {fileID: 3895369150506122006, guid: 99c9522bbb734c147bb697216972a918,
+        type: 3}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[2]
+      value: 
+      objectReference: {fileID: 3330610034807340033, guid: b61899ae5fce9ab48950ffa3bddbb163,
+        type: 3}
+    - target: {fileID: 4406521923637997511, guid: f731010972f3ad646a776ed42e435c9f,
+        type: 3}
+      propertyPath: destroyAnimations.Array.data[5]
+      value: 
+      objectReference: {fileID: 5927232991628126853, guid: 126beb231400ebd42bcfa212223b7d6a,
+        type: 3}
     - target: {fileID: 4406521923637997528, guid: f731010972f3ad646a776ed42e435c9f,
         type: 3}
       propertyPath: m_LocalPosition.x
