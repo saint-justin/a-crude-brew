@@ -1,9 +1,5 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/justin_scene.unity
-=======
 - path: Assets/Scenes/andrew_scoreboard.unity
->>>>>>> origin/andrew-scoreboard
   isLoaded: 1
   isActive: 1
   isSubScene: 0
