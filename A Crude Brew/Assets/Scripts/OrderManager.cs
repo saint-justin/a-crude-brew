@@ -111,11 +111,17 @@ public class OrderManager : MonoBehaviour
     /// <param name="_index"></param>
     public void RemoveOrder(int _index)
     {
-        orders.RemoveAt(_index);
+        //orders.RemoveAt(_index);
 
-        for (int i = _index; i < orders.Count; i++)
+        int i = _index;
+
+        while (i < orders.Count - 1)
         {
+            orders[i + 1] = orders[i];
             orders[i].GetComponent<ActiveOrderTracker>().MoveUp();
+            i++;
         }
+
+        orders.RemoveAt(orders.Count - 1);
     }
 }

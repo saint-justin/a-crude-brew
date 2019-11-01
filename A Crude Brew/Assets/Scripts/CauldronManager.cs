@@ -65,7 +65,7 @@ public class CauldronManager : MonoBehaviour
 
         // Initialize GuiComponents and populate it w/ the 6 icons
         GuiComponents = new List<GameObject>();
-        for (int i = 0; i < gameObject.transform.childCount; i++)
+        for (int i = 0; i < gameObject.transform.childCount - 1; i++)
         {
             GuiComponents.Add(gameObject.transform.GetChild(i).gameObject);
         }
@@ -94,7 +94,10 @@ public class CauldronManager : MonoBehaviour
     /// </summary>
     private void UpdateVisuals()
     {
-        for(int i=0; i < GuiComponents.Count; i++)
+        Debug.Log("GUI Components Count:   " + GuiComponents.Count);
+        Debug.Log("CouterComponents Count: " + CounterComponents.Count);
+
+        for (int i=0; i < GuiComponents.Count; i++)
         {
             GuiComponents[i].transform.GetChild(0).GetComponent<Text>().text = CounterComponents[i].ToString();
         }

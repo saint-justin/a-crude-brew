@@ -1,9 +1,9 @@
-<<<<<<< HEAD
-sceneSetups: []
-=======
 sceneSetups:
-- path: Assets/Scenes/andrew_score_fixes_copy.unity
+<<<<<<< HEAD
+- path: Assets/Scenes/main_menu.unity
+=======
+- path: Assets/Scenes/andrew_scoreboard.unity
+>>>>>>> origin/andrew-scoreboard-integration
   isLoaded: 1
   isActive: 1
   isSubScene: 0
->>>>>>> andrew-score-additions
