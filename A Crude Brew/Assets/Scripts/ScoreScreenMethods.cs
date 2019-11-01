@@ -43,7 +43,7 @@ public class ScoreScreenMethods : MonoBehaviour
 
     private string nameToAdd;
     public GameObject nameForm;
-    public Text scoreText;
+    private Text scoreText;
     private InputField input;
     private Button submitButton;
 
